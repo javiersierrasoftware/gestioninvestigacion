@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FileSignature, Plus, Edit2, Trash2, X, Save } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { FileSignature, Plus, Edit2, Trash2, X, Save, MessageSquare } from 'lucide-react';
 import api from '../api/axios';
 
 interface Criterion {
@@ -25,6 +26,15 @@ export const RubricasAdmin = () => {
     description: '',
     criteria: []
   });
+
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [showModal]);
 
   useEffect(() => {
     fetchRubrics();
@@ -161,85 +171,109 @@ export const RubricasAdmin = () => {
         </div>
       )}
 
-      {showModal && (
-        <div className="modal-backdrop" style={{ zIndex: 999, padding: '0' }}>
-          <div className="card w-full max-w-5xl h-screen md:h-[95vh] flex flex-col scale-in border-none rounded-none md:rounded-2xl shadow-2xl bg-white overflow-hidden p-0" onClick={e => e.stopPropagation()}>
-             <div className="p-6 border-b flex justify-between items-center bg-gray-50/50 flex-shrink-0">
-               <h3 className="heading-3 text-primary-900">{isEditMode ? 'Editar Rúbrica' : 'Crear Rúbrica'}</h3>
-               <button className="btn-ghost p-1" onClick={() => setShowModal(false)}><X size={20}/></button>
+      {showModal && createPortal(
+        <div className="modal-backdrop" style={{ 
+          zIndex: 9999, 
+          position: 'fixed', 
+          inset: 0, 
+          backgroundColor: 'rgba(0,0,0,0.5)', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: '20px'
+        }}>
+          <div className="card w-full max-w-6xl flex flex-col scale-in bg-white shadow-2xl p-0" 
+               style={{ height: '90vh', maxHeight: '90vh', width: '100%', overflow: 'hidden' }}
+               onClick={e => e.stopPropagation()}>
+             
+             <div className="p-6 border-b flex justify-between items-center bg-gray-50 flex-shrink-0" style={{ height: '80px' }}>
+               <div>
+                 <h3 className="heading-3 text-primary-900 mb-0.5">{isEditMode ? 'Editar Rúbrica' : 'Crear Nueva Rúbrica'}</h3>
+                 <p className="text-secondary text-xs">Administre los criterios y puntajes máximos.</p>
+               </div>
+               <button className="btn-ghost p-1" onClick={() => setShowModal(false)}><X size={24}/></button>
              </div>
 
-             <div className="p-6 overflow-y-auto flex-1 bg-white">
-                <form id="rubric-form" onSubmit={handleSave} className="flex flex-col gap-6">
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     <div className="form-group mb-0">
-                       <label className="form-label text-sm font-bold text-gray-700">Nombre de la Rúbrica</label>
-                       <input required type="text" className="form-input" value={currentRubric.name} onChange={e => setCurrentRubric({...currentRubric, name: e.target.value})} placeholder="Ej. Evaluación de Semilleros"/>
-                     </div>
-                     <div className="form-group mb-0">
-                       <label className="form-label text-sm font-bold text-gray-700">Descripción (Opcional)</label>
-                       <input type="text" className="form-input" value={currentRubric.description} onChange={e => setCurrentRubric({...currentRubric, description: e.target.value})} placeholder="Breve uso de esta matriz..."/>
-                     </div>
-                   </div>
+             <div className="flex-1 bg-[#fcfcfc]" style={{ overflowY: 'auto', minHeight: 0 }}>
+                <form id="rubric-form" onSubmit={handleSave} className="p-6 md:p-10 max-w-4xl mx-auto flex flex-col gap-6" style={{ paddingBottom: '100px' }}>
+                   <section className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Información General</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="form-group mb-0">
+                        <label className="form-label text-xs font-bold text-gray-500 uppercase tracking-tight mb-1 block">Nombre de la Rúbrica</label>
+                        <input required type="text" className="form-input" value={currentRubric.name} onChange={e => setCurrentRubric({...currentRubric, name: e.target.value})} placeholder="Ej. Evaluación de Proyectos"/>
+                      </div>
+                      <div className="form-group mb-0">
+                        <label className="form-label text-xs font-bold text-gray-500 uppercase tracking-tight mb-1 block">Descripción (Opcional)</label>
+                        <input type="text" className="form-input" value={currentRubric.description} onChange={e => setCurrentRubric({...currentRubric, description: e.target.value})} placeholder="¿Para qué se usa esta matriz?"/>
+                      </div>
+                    </div>
+                   </section>
 
-                   <hr className="border-gray-100" />
-
-                   <div>
-                     <div className="flex justify-between items-end mb-4">
+                   <div className="mt-4">
+                     <div className="flex justify-between items-end mb-6 px-2 text-primary-900">
                        <div>
-                         <h4 className="font-bold text-lg text-gray-800">Criterios de Evaluación</h4>
-                         <p className="text-xs text-secondary">Defina sobre qué aspectos el par evaluador otorgará un puntaje.</p>
+                         <h4 className="font-bold text-xl uppercase tracking-tight">Criterios de Calificación</h4>
+                         <p className="text-sm opacity-70">Defina cada ítem de evaluación.</p>
                        </div>
-                       <div className="text-right">
-                         <div className="text-[10px] font-bold text-gray-500 uppercase">Puntaje Total Máximo</div>
-                         <div className="text-2xl font-black text-primary-600">{totalScore} <span className="text-sm">pts</span></div>
+                       <div className="bg-primary-50 px-5 py-3 rounded-2xl border border-primary-100 text-center shadow-sm">
+                         <div className="text-[10px] font-bold text-primary-500 uppercase tracking-widest mb-1">Puntaje Total</div>
+                         <div className="text-2xl font-black text-primary-700 leading-none">{totalScore} <span className="text-sm font-bold text-primary-500">pts</span></div>
                        </div>
                      </div>
 
                      <div className="space-y-4">
                        {currentRubric.criteria?.map((crit, idx) => (
-                         <div key={idx} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50/50 relative">
-                           <div className="absolute -top-2 -left-2 bg-gray-200 text-gray-600 font-bold w-5 h-5 flex items-center justify-center rounded text-[10px] shadow-sm flex-shrink-0">{idx + 1}</div>
+                         <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm relative group hover:border-primary-300 transition-all">
+                           <div className="absolute -top-3 -left-3 bg-primary-600 text-white font-black w-8 h-8 flex items-center justify-center rounded-xl text-sm shadow-lg shadow-primary-500/20">{idx + 1}</div>
                            
-                           <div className="md:col-span-4 form-group mb-0">
-                             <label className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">Criterio</label>
-                             <input required type="text" className="form-input text-sm" value={crit.name} onChange={e => updateCriterion(idx, 'name', e.target.value)} placeholder="Ej. Metodología e Impacto"/>
+                           <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
+                             <div className="md:col-span-4 form-group mb-0">
+                               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Criterio</label>
+                               <input required type="text" className="form-input text-sm bg-gray-50/50 focus:bg-white" value={crit.name} onChange={e => updateCriterion(idx, 'name', e.target.value)} placeholder="Ej. Originalidad"/>
+                             </div>
+                             
+                             <div className="md:col-span-6 form-group mb-0">
+                               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Instrucción</label>
+                               <input type="text" className="form-input text-sm text-gray-600 bg-gray-50/50 focus:bg-white" value={crit.description} onChange={e => updateCriterion(idx, 'description', e.target.value)} placeholder="Guía para el par..."/>
+                             </div>
+                             
+                             <div className="md:col-span-1 form-group mb-0 text-center">
+                               <label className="text-[10px] font-bold text-primary-600 uppercase tracking-widest mb-1.5 block">Máx</label>
+                               <input required type="number" min="1" className="form-input text-sm font-black text-center text-primary-700 bg-primary-50/20 border-primary-100" value={crit.maxScore} onChange={e => updateCriterion(idx, 'maxScore', Number(e.target.value))}/>
+                             </div>
+                             
+                             <div className="md:col-span-1 flex items-end justify-end">
+                               <button type="button" onClick={() => removeCriterion(idx)} className="btn-ghost text-red-300 hover:text-red-600 p-2 rounded-xl">
+                                 <Trash2 size={20} />
+                               </button>
+                             </div>
                            </div>
-                           
-                           <div className="md:col-span-5 form-group mb-0">
-                             <label className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">Descripción / Instrucción al Evaluador</label>
-                             <input type="text" className="form-input text-sm" value={crit.description} onChange={e => updateCriterion(idx, 'description', e.target.value)} placeholder="¿Qué se evalúa exactamente?"/>
-                           </div>
-                           
-                           <div className="md:col-span-2 form-group mb-0">
-                             <label className="text-[10px] font-bold text-primary-600 uppercase tracking-tight">Pts Máximos</label>
-                             <input required type="number" min="1" className="form-input text-sm font-bold text-primary-700 bg-primary-50/30" value={crit.maxScore} onChange={e => updateCriterion(idx, 'maxScore', Number(e.target.value))}/>
-                           </div>
-                           
-                           <div className="md:col-span-1 flex items-end pb-1 justify-end">
-                             <button type="button" onClick={() => removeCriterion(idx)} className="btn btn-outline text-error border-transparent hover:bg-red-50 p-2">
-                               <Trash2 size={18} />
-                             </button>
+
+                           <div className="mt-4 pt-3 border-t border-dashed border-gray-100 flex items-center gap-2.5 text-emerald-600 opacity-60">
+                             <MessageSquare size={14} strokeWidth={2.5} />
+                             <span className="text-[9px] font-bold uppercase tracking-widest leading-none">Anotación del evaluador habilitada</span>
                            </div>
                          </div>
                        ))}
 
-                       <button type="button" onClick={addCriterion} className="btn w-full bg-white border-2 border-dashed border-gray-300 text-gray-500 hover:text-primary-600 hover:border-primary-300 hover:bg-primary-50 py-3 rounded-xl transition-all font-bold text-sm">
-                         <Plus size={18} className="mr-2" /> Agregar Criterio
+                       <button type="button" onClick={addCriterion} className="btn w-full bg-white border-2 border-dashed border-gray-200 text-gray-400 hover:text-primary-600 hover:border-primary-400 hover:bg-primary-50/20 py-5 rounded-2xl transition-all font-black text-xs uppercase tracking-widest">
+                         <Plus size={20} className="mr-2" /> Agregar Nuevo Criterio
                        </button>
                      </div>
                    </div>
                 </form>
              </div>
 
-             <div className="p-6 border-t bg-gray-50/80 flex justify-end gap-3 flex-shrink-0">
-               <button type="button" className="btn btn-outline" onClick={() => setShowModal(false)}>Cancelar</button>
-               <button type="submit" form="rubric-form" className="btn btn-primary shadow-lg">
+             <div className="p-6 border-t bg-white flex justify-end gap-3 flex-shrink-0" style={{ height: '100px' }}>
+               <button type="button" className="btn btn-outline h-12 px-8" onClick={() => setShowModal(false)}>Descartar Cambios</button>
+               <button type="submit" form="rubric-form" className="btn btn-primary h-12 px-10 shadow-xl shadow-primary-500/20 font-bold uppercase tracking-tight text-xs">
                  <Save size={18} className="mr-2" /> Guardar Rúbrica
                </button>
              </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

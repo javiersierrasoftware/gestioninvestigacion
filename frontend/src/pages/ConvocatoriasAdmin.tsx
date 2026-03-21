@@ -398,14 +398,20 @@ export const ConvocatoriasAdmin = () => {
       )}
 
       {showFieldsModal && activeConvo && createPortal(
-        <div className="modal-backdrop animate-fade-in" style={{ padding: '0', zIndex: 9999 }}>
-          <div className="card w-full max-w-6xl h-screen md:h-[95vh] flex flex-col scale-in border-none rounded-none md:rounded-2xl shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center p-6 border-b border-border-color bg-white flex-shrink-0">
-              <div className="flex items-center gap-4">
+        <div className="modal-backdrop animate-fade-in" style={{ padding: '0', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="card w-full max-w-6xl flex flex-col scale-in border-none rounded-none md:rounded-2xl shadow-2xl overflow-hidden" 
+            style={{ height: '90vh', maxHeight: '90vh', width: '95%', margin: '0 auto', overflow: 'hidden', padding: 0 }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* CABECERA FIJA */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 md:p-6 border-b border-border-color bg-white flex-shrink-0" style={{ minHeight: '80px', height: 'auto' }}>
+              <div className="flex items-center gap-4 w-full md:w-auto mb-4 md:mb-0">
                 <div>
-                  <h3 className="heading-3 mb-1 text-primary-900">{showPreview ? 'Vista Previa' : 'Configurar Formulario'}: {activeConvo.title}</h3>
-                  <p className="text-secondary text-sm">
-                    {showPreview ? 'Así es como verán el formulario los docentes al radicar.' : 'Construye el formulario que los docentes deberán llenar al radicar el proyecto.'}
+                  <h3 className="text-base md:heading-3 font-bold text-primary-900 leading-tight">
+                    {showPreview ? 'Vista Previa' : 'Constructor'}: <span className="text-primary-600">{activeConvo.title}</span>
+                  </h3>
+                  <p className="text-secondary text-[10px] md:text-sm mt-1">
+                    {showPreview ? 'Así se verá el formulario.' : 'Diseñe los campos de radicación.'}
                   </p>
                 </div>
               </div>
@@ -422,79 +428,92 @@ export const ConvocatoriasAdmin = () => {
               </div>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50">
+            {/* AREA DE CONTENIDO CON SCROLL FORZADO */}
+            <div className="flex-1 bg-gray-50/50" style={{ overflowY: 'auto', minHeight: 0, padding: '2rem' }}>
               <div className="max-w-4xl mx-auto">
                 {!showPreview ? (
                   <div className="flex flex-col gap-4 mb-8">
-                    <div className="bg-[#A6B07E]/10 p-5 rounded-2xl border border-[#A6B07E]/20 shadow-sm">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <span className="text-[10px] font-extrabold text-[#32965D] uppercase tracking-widest border-r border-[#A6B07E]/30 pr-3">Básicas:</span>
-                        <button type="button" onClick={() => addTemplateField('resumen_ejecutivo', 'Resumen Ejecutivo', 'textarea', true, 'Resumir en máximo de 500 palabras...', 'Escriba aquí el resumen ejecutivo...')} className="btn btn-outline bg-white py-1 px-3 text-[10px] border-[#A6B07E]/30 hover:bg-[#A6B07E]/10 font-bold transition-all hover:scale-105">+ Resumen</button>
-                        <button type="button" onClick={() => addTemplateField('objetivos', 'Objetivos (General y Específicos)', 'textarea', true, 'Redactar con un verbo en infinitivo...', 'Escriba cada objetivo empezando por uno general...')} className="btn btn-outline bg-white py-1 px-3 text-[10px] border-[#A6B07E]/30 hover:bg-[#A6B07E]/10 font-bold transition-all hover:scale-105">+ Objetivos</button>
-                        <button type="button" onClick={() => addTemplateField('metodologia', 'Metodología Propuesta', 'textarea', true, 'La metodología define el camino a seguir...', 'Detalle la metodología...')} className="btn btn-outline bg-white py-1 px-3 text-[10px] border-[#A6B07E]/30 hover:bg-[#A6B07E]/10 font-bold transition-all hover:scale-105">+ Metodología</button>
-                        <button type="button" onClick={() => addTemplateField('tipo_proyecto', 'Tipo de proyecto', 'select', true, 'Seleccione el tipo de investigación.', '', ['Investigación Básica', 'Investigación Aplicada', 'Desarrollo Experimental', 'Innovación'])} className="btn btn-outline bg-white py-1 px-3 text-[10px] border-[#A6B07E]/30 hover:bg-[#A6B07E]/10 font-bold transition-all hover:scale-105">+ Tipo Proyecto</button>
+                    <div className="bg-[#A6B07E]/10 p-6 rounded-2xl border border-[#A6B07E]/20 shadow-sm space-y-6">
+                      {/* CATEGORIA BASICAS */}
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2 border-b border-[#A6B07E]/20 pb-2">
+                           <span className="text-xs font-black text-[#32965D] uppercase tracking-widest">Campos Básicos</span>
+                           <div className="h-px flex-1 bg-gradient-to-r from-[#32965D]/20 to-transparent"></div>
+                        </div>
+                        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          <button type="button" onClick={() => addTemplateField('resumen_ejecutivo', 'Resumen Ejecutivo', 'textarea', true, 'Resumir en máximo de 500 palabras...', 'Escriba aquí el resumen ejecutivo...')} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#A6B07E]/40 hover:bg-[#A6B07E]/10 font-bold transition-all shadow-sm w-full">+ Resumen</button>
+                          <button type="button" onClick={() => addTemplateField('objetivos', 'Objetivos (General y Específicos)', 'textarea', true, 'Redactar con un verbo en infinitivo...', 'Escriba cada objetivo empezando por uno general...')} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#A6B07E]/40 hover:bg-[#A6B07E]/10 font-bold transition-all shadow-sm w-full">+ Objetivos</button>
+                          <button type="button" onClick={() => addTemplateField('metodologia', 'Metodología Propuesta', 'textarea', true, 'La metodología define el camino a seguir...', 'Detalle la metodología...')} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#A6B07E]/40 hover:bg-[#A6B07E]/10 font-bold transition-all shadow-sm w-full">+ Metodología</button>
+                          <button type="button" onClick={() => addTemplateField('tipo_proyecto', 'Tipo de proyecto', 'select', true, 'Seleccione el tipo de investigación.', '', ['Investigación Básica', 'Investigación Aplicada', 'Desarrollo Experimental', 'Innovación'])} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#A6B07E]/40 hover:bg-[#A6B07E]/10 font-bold transition-all shadow-sm w-full">+ Tipo Proyecto</button>
+                        </div>
                       </div>
                       
-                      <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-[#A6B07E]/20">
-                        <span className="text-[10px] font-extrabold text-[#32965D] uppercase tracking-widest border-r border-[#A6B07E]/30 pr-3">Científicas:</span>
-                        <button type="button" onClick={() => addTemplateField('planteamiento_problema', 'Planteamiento del Problema', 'textarea', true, 'Permite identificar la necesidad de realizar el estudio y debe ser formulado de manera clara y concreta.', 'Identifique el aporte del problema a la luz de políticas como Misión de Sabios, CONPES, etc.')} className="btn btn-outline bg-white py-1 px-3 text-[10px] border-[#A6B07E]/30 hover:bg-[#A6B07E]/10 font-bold transition-all hover:scale-105">+ Planteamiento</button>
-                        <button type="button" onClick={() => addTemplateField('magnitud_problema', 'Magnitud e Indicadores', 'textarea', true, 'Dimensión de la problemática. Registrar un indicador de línea base o referencia (cuantitativo).', 'Indique fuente de verificación oficial actualizada.')} className="btn btn-outline bg-white py-1 px-3 text-[10px] border-[#A6B07E]/30 hover:bg-[#A6B07E]/10 font-bold transition-all hover:scale-105">+ Magnitud/Ind</button>
-                         <button type="button" onClick={() => {
-                          if(activeConvo && !activeConvo.dynamicFields.find(f => f.name === 'arbol_problemas')) {
-                            setActiveConvo({
-                              ...activeConvo,
-                              dynamicFields: [...activeConvo.dynamicFields, { 
-                                name: 'arbol_problemas', 
-                                label: 'Árbol de Problemas', 
-                                type: 'table', 
-                                required: true, 
-                                helpText: 'Esquema que ilustra causas, problema central y consecuencias (efectos).', 
-                                placeholder: '',
-                                columns: ['Nivel / Componente', 'Descripción Detallada'],
-                                options: ['Fines', 'Efectos Directos', 'Problema Central', 'Causas Directas', 'Causas Indirectas']
-                              }]
-                            });
-                          }
-                        }} className="btn btn-outline bg-white py-1.5 px-3 text-[10px] border-[#32965D]/30 border-dashed text-[#32965D] hover:bg-[#32965D]/5 font-bold transition-all hover:scale-105 shadow-sm">+ Árbol Problemas (Tabla)</button>
+                      {/* CATEGORIA CIENTIFICAS */}
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2 border-b border-[#A6B07E]/20 pb-2">
+                           <span className="text-xs font-black text-[#32965D] uppercase tracking-widest">Campos Científicos</span>
+                           <div className="h-px flex-1 bg-gradient-to-r from-[#32965D]/20 to-transparent"></div>
+                        </div>
+                        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          <button type="button" onClick={() => addTemplateField('planteamiento_problema', 'Planteamiento del Problema', 'textarea', true, 'Permite identificar la necesidad de realizar el estudio y debe ser formulado de manera clara y concreta.', 'Identifique el aporte del problema a la luz de políticas como Misión de Sabios, CONPES, etc.')} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#A6B07E]/40 hover:bg-[#A6B07E]/10 font-bold transition-all shadow-sm w-full">+ Planteamiento</button>
+                          <button type="button" onClick={() => addTemplateField('magnitud_problema', 'Magnitud e Indicadores', 'textarea', true, 'Dimensión de la problemática. Registrar un indicador de línea base o referencia (cuantitativo).', 'Indique fuente de verificación oficial actualizada.')} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#A6B07E]/40 hover:bg-[#A6B07E]/10 font-bold transition-all shadow-sm w-full">+ Magnitud/Ind</button>
+                           <button type="button" onClick={() => {
+                            if(activeConvo && !activeConvo.dynamicFields.find(f => f.name === 'arbol_problemas')) {
+                              setActiveConvo({
+                                ...activeConvo,
+                                dynamicFields: [...activeConvo.dynamicFields, { 
+                                  name: 'arbol_problemas', 
+                                  label: 'Árbol de Problemas', 
+                                  type: 'table', 
+                                  required: true, 
+                                  helpText: 'Esquema que ilustra causas, problema central y consecuencias (efectos).', 
+                                  placeholder: '',
+                                  columns: ['Nivel / Componente', 'Descripción Detallada'],
+                                  options: ['Fines', 'Efectos Directos', 'Problema Central', 'Causas Directas', 'Causas Indirectas']
+                                }]
+                              });
+                            }
+                          }} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#32965D]/40 border-dashed text-[#32965D] hover:bg-[#32965D]/5 font-bold transition-all shadow-sm w-full">+ Árbol Problemas (Tabla)</button>
 
-                        <button type="button" onClick={() => {
-                          if(activeConvo && !activeConvo.dynamicFields.find(f => f.name === 'arbol_objetivos')) {
-                            setActiveConvo({
-                              ...activeConvo,
-                              dynamicFields: [...activeConvo.dynamicFields, { 
-                                name: 'arbol_objetivos', 
-                                label: 'Árbol de Objetivos', 
-                                type: 'table', 
-                                required: true, 
-                                helpText: 'Esquema que ilustra medios, fines y objetivo central. Sus objetivos específicos serán mapeados al cronograma.', 
-                                placeholder: '',
-                                columns: ['Nivel / Componente', 'Descripción Detallada'],
-                                options: ['Fines Indirectos', 'Fines Directos', 'Objetivo General', 'Objetivos Específicos', 'Medios Indirectos']
-                              }]
-                            });
-                          }
-                        }} className="btn btn-outline bg-white py-1.5 px-3 text-[10px] border-[#32965D]/30 border-dashed text-[#32965D] hover:bg-[#32965D]/5 font-bold transition-all hover:scale-105 shadow-sm">+ Árbol Objetivos (Tabla)</button>
-                        <button type="button" onClick={() => {
-                          if(activeConvo) {
-                            const name = 'tabla_estructurada_' + Date.now();
-                            setActiveConvo({
-                              ...activeConvo,
-                              dynamicFields: [...activeConvo.dynamicFields, { 
-                                name, 
-                                label: 'Nueva Tabla Estructurada', 
-                                type: 'table', 
-                                required: true, 
-                                helpText: 'Especifique la estructura de columnas y filas en la configuración del campo.', 
-                                placeholder: '',
-                                columns: ['Columna 1', 'Columna 2'],
-                                options: ['Fila 1']
-                              }]
-                            });
-                          }
-                        }} className="btn btn-outline bg-white py-1.5 px-3 text-[10px] border-[#C97064]/30 border-dashed text-[#C97064] hover:bg-[#C97064]/5 font-bold transition-all hover:scale-105 shadow-sm">+ Tabla Vacía</button>
-                        <button type="button" onClick={() => addTemplateField('antecedentes', 'Antecedentes', 'textarea', true, 'Relacione información con el contexto regional y departamental.', 'Relacione con Misión de Sabios, Plan de Desarrollo, etc.')} className="btn btn-outline bg-white py-1 px-3 text-[10px] border-[#A6B07E]/30 hover:bg-[#A6B07E]/10 font-bold transition-all hover:scale-105">+ Antecedentes</button>
-                        <button type="button" onClick={() => addTemplateField('justificacion', 'Justificación', 'textarea', true, 'Descripción de la necesidad y viabilidad del proyecto.', 'Justifique la pertinencia para el territorio.')} className="btn btn-outline bg-white py-1 px-3 text-[10px] border-[#A6B07E]/30 hover:bg-[#A6B07E]/10 font-bold transition-all hover:scale-105">+ Justificación</button>
-                        <button type="button" onClick={() => addTemplateField('marco_conceptual', 'Marco Conceptual', 'textarea', true, 'Aspectos conceptuales y teóricos que enmarcan el problema.', 'Incluya Marco Normativo según aplique.')} className="btn btn-outline bg-white py-1 px-3 text-[10px] border-[#A6B07E]/30 hover:bg-[#A6B07E]/10 font-bold transition-all hover:scale-105">+ M. Conceptual</button>
+                          <button type="button" onClick={() => {
+                            if(activeConvo && !activeConvo.dynamicFields.find(f => f.name === 'arbol_objetivos')) {
+                              setActiveConvo({
+                                ...activeConvo,
+                                dynamicFields: [...activeConvo.dynamicFields, { 
+                                  name: 'arbol_objetivos', 
+                                  label: 'Árbol de Objetivos', 
+                                  type: 'table', 
+                                  required: true, 
+                                  helpText: 'Esquema que ilustra medios, fines y objetivo central. Sus objetivos específicos serán mapeados al cronograma.', 
+                                  placeholder: '',
+                                  columns: ['Nivel / Componente', 'Descripción Detallada'],
+                                  options: ['Fines Indirectos', 'Fines Directos', 'Objetivo General', 'Objetivos Específicos', 'Medios Indirectos']
+                                }]
+                              });
+                            }
+                          }} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#32965D]/40 border-dashed text-[#32965D] hover:bg-[#32965D]/5 font-bold transition-all shadow-sm w-full">+ Árbol Objetivos (Tabla)</button>
+                          <button type="button" onClick={() => {
+                            if(activeConvo) {
+                              const name = 'tabla_estructurada_' + Date.now();
+                              setActiveConvo({
+                                ...activeConvo,
+                                dynamicFields: [...activeConvo.dynamicFields, { 
+                                  name, 
+                                  label: 'Nueva Tabla Estructurada', 
+                                  type: 'table', 
+                                  required: true, 
+                                  helpText: 'Especifique la estructura de columnas y filas en la configuración del campo.', 
+                                  placeholder: '',
+                                  columns: ['Columna 1', 'Columna 2'],
+                                  options: ['Fila 1']
+                                }]
+                              });
+                            }
+                          }} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#C97064]/40 border-dashed text-[#C97064] hover:bg-[#C97064]/5 font-bold transition-all shadow-sm w-full">+ Tabla Vacía</button>
+                          <button type="button" onClick={() => addTemplateField('antecedentes', 'Antecedentes', 'textarea', true, 'Relacione información con el contexto regional y departamental.', 'Relacione con Misión de Sabios, Plan de Desarrollo, etc.')} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#A6B07E]/40 hover:bg-[#A6B07E]/10 font-bold transition-all shadow-sm w-full">+ Antecedentes</button>
+                          <button type="button" onClick={() => addTemplateField('justificacion', 'Justificación', 'textarea', true, 'Descripción de la necesidad y viabilidad del proyecto.', 'Justifique la pertinencia para el territorio.')} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#A6B07E]/40 hover:bg-[#A6B07E]/10 font-bold transition-all shadow-sm w-full">+ Justificación</button>
+                          <button type="button" onClick={() => addTemplateField('marco_conceptual', 'Marco Conceptual', 'textarea', true, 'Aspectos conceptuales y teóricos que enmarcan el problema.', 'Incluya Marco Normativo según aplique.')} className="btn btn-outline bg-white py-2 px-2 text-[10px] border-[#A6B07E]/40 hover:bg-[#A6B07E]/10 font-bold transition-all shadow-sm w-full">+ M. Conceptual</button>
+                        </div>
                       </div>
                     </div>
 
@@ -654,11 +673,12 @@ export const ConvocatoriasAdmin = () => {
               </div>
             </div>
             
-            <div className="flex justify-end gap-3 p-6 border-t border-border-color bg-white flex-shrink-0">
-              <button type="button" className="btn btn-outline px-6" onClick={() => setShowFieldsModal(false)}>Descartar y Salir</button>
-              <button type="button" className="btn btn-primary px-10 shadow-lg" onClick={handleSaveFields}>
-                <CheckCircle size={20} className="mr-2"/>
-                {showPreview ? 'Guardar Todo y Salir' : 'Finalizar y Guardar'}
+            {/* PIE DE PAGINA FIJO */}
+            <div className="flex justify-end gap-3 p-4 md:p-6 border-t border-border-color bg-white flex-shrink-0" style={{ minHeight: '80px', height: 'auto' }}>
+              <button type="button" className="btn btn-outline px-4 md:px-6 text-xs" onClick={() => setShowFieldsModal(false)}>Descartar</button>
+              <button type="button" className="btn btn-primary px-6 md:px-10 shadow-lg text-xs" onClick={handleSaveFields}>
+                <CheckCircle size={18} className="mr-2"/>
+                {showPreview ? 'Guardar Cambios' : 'Finalizar y Guardar'}
               </button>
             </div>
           </div>

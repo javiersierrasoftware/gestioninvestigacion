@@ -56,6 +56,10 @@ export const ProduccionDocente = () => {
       else if (meta.nivel?.includes('Pregrado')) base = 178;
     } else if (type.includes('Experiencia')) {
       base = (parseFloat(meta.tiempo_anios) || 0) * 4;
+    } else if (type.includes('Premio')) {
+      base = 15;
+    } else if (type.includes('Producción técnica')) {
+      base = 0; // Según tabla enviada
     } else if (type.includes('Categoría Docente')) {
       if (meta.categoria?.includes('Asistente')) base = 58;
       else if (meta.categoria?.includes('Auxiliar')) base = 37;
@@ -81,7 +85,7 @@ export const ProduccionDocente = () => {
     const ptsExp = calculateSum(aprobados.filter(r => r.productId?.type?.includes('Experiencia')));
     const ptsProd = calculateSum(aprobados.filter(r => {
       const t = r.productId?.type || '';
-      return t.includes('Artículo') || t.includes('Libro') || t.includes('Software') || t.includes('Patente');
+      return t.includes('Artículo') || t.includes('Libro') || t.includes('Software') || t.includes('Patente') || t.includes('Premio') || t.includes('Producción técnica');
     }));
     
     const totalAprobados = ptsCat + ptsTitulos + ptsExp + ptsProd;
@@ -92,6 +96,22 @@ export const ProduccionDocente = () => {
 
   // Form Meta Templates (Decreto 1279 de 2002)
   const productTypes = [
+    {
+      name: 'Premio', idType: 'Acta / Certificación',
+      meta: [
+        { key: 'otorgado_por', label: 'Entidad que otorga', type: 'text' },
+        { key: 'ambito', label: 'Ámbito', type: 'select', options: ['Nacional', 'Internacional'] },
+        { key: 'anio', label: 'Año', type: 'number' }
+      ]
+    },
+    {
+      name: 'Producción técnica', idType: 'Registro / Patente',
+      meta: [
+        { key: 'entidad', label: 'Entidad de registro', type: 'text' },
+        { key: 'link', label: 'Link Ejecutable / Evidencia', type: 'text' },
+        { key: 'anio', label: 'Año', type: 'number' }
+      ]
+    },
     {
       name: 'Categoría Docente', idType: 'Resolución o Acta',
       meta: [

@@ -65,15 +65,11 @@ let UsersService = class UsersService {
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
         const createdUser = new this.userModel({
-            name,
-            email,
+            ...createUserDto,
             passwordHash,
             role: role || user_schema_1.UserRole.DOCENTE,
-            facultad,
-            programa,
-            areaConocimiento,
-            identificationNumber
         });
+        delete createdUser.password;
         return createdUser.save();
     }
     async findByEmail(email) {
@@ -81,7 +77,7 @@ let UsersService = class UsersService {
     }
     findAll(role) {
         const filter = role ? { role } : {};
-        return this.userModel.find(filter).exec();
+        return this.userModel.find(filter).populate('grupos').exec();
     }
     findOne(id) {
         return this.userModel.findById(id).exec();

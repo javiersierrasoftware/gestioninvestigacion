@@ -34,6 +34,11 @@ let User = class User {
     mincienciasCategory;
     researchAreas;
     biography;
+    birthDate;
+    mesVinculacion;
+    anoVinculacion;
+    tipoContrato;
+    cvlacUrl;
     grupos;
 };
 exports.User = User;
@@ -85,6 +90,26 @@ __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "biography", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], User.prototype, "birthDate", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], User.prototype, "mesVinculacion", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], User.prototype, "anoVinculacion", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], User.prototype, "tipoContrato", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], User.prototype, "cvlacUrl", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId, ref: 'Group' }] }),
     __metadata("design:type", Array)

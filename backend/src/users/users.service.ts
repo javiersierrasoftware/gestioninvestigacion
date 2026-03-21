@@ -24,15 +24,11 @@ export class UsersService {
     const passwordHash = await bcrypt.hash(password, salt);
 
     const createdUser = new this.userModel({
-      name,
-      email,
+      ...createUserDto,
       passwordHash,
       role: role || UserRole.DOCENTE,
-      facultad,
-      programa,
-      areaConocimiento,
-      identificationNumber
     });
+    delete (createdUser as any).password;
 
     return createdUser.save();
   }
@@ -43,7 +39,7 @@ export class UsersService {
 
   findAll(role?: string) {
     const filter = role ? { role } : {};
-    return this.userModel.find(filter).exec();
+    return this.userModel.find(filter).populate('grupos').exec();
   }
 
   findOne(id: string) {

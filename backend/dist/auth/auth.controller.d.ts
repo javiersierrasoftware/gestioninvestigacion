@@ -10,6 +10,16 @@ export declare class AuthController {
             email: any;
             role: any;
             identificationNumber: any;
+            facultad: any;
+            programa: any;
+            mincienciasCategory: any;
+            researchAreas: any;
+            biography: any;
+            birthDate: any;
+            mesVinculacion: any;
+            anoVinculacion: any;
+            tipoContrato: any;
+            cvlacUrl: any;
         };
     }>;
     register(createUserDto: any): Promise<{
@@ -20,6 +30,16 @@ export declare class AuthController {
             email: any;
             role: any;
             identificationNumber: any;
+            facultad: any;
+            programa: any;
+            mincienciasCategory: any;
+            researchAreas: any;
+            biography: any;
+            birthDate: any;
+            mesVinculacion: any;
+            anoVinculacion: any;
+            tipoContrato: any;
+            cvlacUrl: any;
         };
     }>;
 }

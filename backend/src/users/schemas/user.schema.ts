@@ -50,6 +50,21 @@ export class User {
   @Prop()
   biography?: string;
 
+  @Prop()
+  birthDate?: string;
+
+  @Prop()
+  mesVinculacion?: string;
+
+  @Prop()
+  anoVinculacion?: string;
+
+  @Prop()
+  tipoContrato?: string;
+
+  @Prop()
+  cvlacUrl?: string;
+
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Group' }] })
   grupos: Types.ObjectId[];
 }

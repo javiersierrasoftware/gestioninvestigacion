@@ -51,6 +51,9 @@ let ProjectsController = class ProjectsController {
     update(id, updateProjectDto, req) {
         return this.projectsService.update(id, updateProjectDto, req.user.userId);
     }
+    remove(id, req) {
+        return this.projectsService.remove(id, req.user.userId);
+    }
 };
 exports.ProjectsController = ProjectsController;
 __decorate([
@@ -130,6 +133,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], ProjectsController.prototype, "remove", null);
 exports.ProjectsController = ProjectsController = __decorate([
     (0, common_1.Controller)('projects'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

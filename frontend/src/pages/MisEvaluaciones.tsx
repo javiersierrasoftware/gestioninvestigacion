@@ -12,6 +12,7 @@ export const MisEvaluaciones = () => {
   // States for Evaluation View
   const [activeProject, setActiveProject] = useState<any | null>(null);
   const [scores, setScores] = useState<Record<string, number>>({});
+  const [criterionComments, setCriterionComments] = useState<Record<string, string>>({});
   const [comments, setComments] = useState('');
 
   useEffect(() => {
@@ -33,12 +34,14 @@ export const MisEvaluaciones = () => {
   const handleOpenEvaluation = (proj: any) => {
     setActiveProject(proj);
     setScores({});
+    setCriterionComments({});
     setComments('');
     
     // Si ya está evaluado o en progreso, cargar datos previos para lectura
     const myEval = proj.evaluations?.find((e: any) => e.evaluator === user?.id || e.evaluator._id === user?.id);
     if (myEval && (myEval.status === 'evaluado' || myEval.status === 'evaluando')) {
        setScores(myEval.scores || {});
+       setCriterionComments(myEval.criterionComments || {});
        setComments(myEval.comments || '');
     }
   };
@@ -53,6 +56,7 @@ export const MisEvaluaciones = () => {
     try {
        await api.post(`/projects/${activeProject._id}/evaluate`, { 
          scores, 
+         criterionComments,
          comments, 
          status: isDraft ? 'evaluando' : 'evaluado' 
        });
@@ -226,6 +230,17 @@ export const MisEvaluaciones = () => {
                                  onChange={e => setScores({...scores, [crit._id]: e.target.value})}
                                  disabled={getMyEvalState(activeProject).status === 'evaluado'}
                                />
+                             </div>
+
+                             <div className="mt-3 pt-3 border-t border-gray-100">
+                               <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">Anotaciones / Justificación (Opcional)</label>
+                               <textarea 
+                                 className="form-input text-xs h-16 bg-white border-gray-100"
+                                 placeholder="Justifique el puntaje para este criterio..."
+                                 value={criterionComments[crit._id] || ''}
+                                 onChange={e => setCriterionComments({...criterionComments, [crit._id]: e.target.value})}
+                                 disabled={getMyEvalState(activeProject).status === 'evaluado'}
+                               ></textarea>
                              </div>
                            </div>
                         ))}

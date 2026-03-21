@@ -59,7 +59,7 @@ let ProjectsService = class ProjectsService {
         const existingEvalIds = project.evaluations?.map(e => e.evaluator.toString()) || [];
         const newEvals = evaluatorIds
             .filter(id => !existingEvalIds.includes(id))
-            .map(id => ({ evaluator: id, status: 'pendiente', scores: {}, comments: '', totalScore: 0 }));
+            .map(id => ({ evaluator: id, status: 'pendiente', scores: {}, criterionComments: {}, comments: '', totalScore: 0 }));
         if (newEvals.length > 0) {
             if (!project.evaluations)
                 project.evaluations = [];
@@ -80,11 +80,12 @@ let ProjectsService = class ProjectsService {
         const evalIndex = project.evaluations.findIndex(e => e.evaluator.toString() === evaluatorId);
         if (evalIndex === -1)
             throw new common_1.NotFoundException('No estás asignado como evaluador a este proyecto');
-        const totalScore = Object.values(result.scores).reduce((a, b) => a + Number(b), 0);
-        project.evaluations[evalIndex].scores = result.scores;
-        project.evaluations[evalIndex].comments = result.comments;
-        project.evaluations[evalIndex].totalScore = totalScore;
-        project.evaluations[evalIndex].status = result.status || 'evaluado';
+        const evalEntry = project.evaluations[evalIndex];
+        evalEntry.status = result.status || 'evaluado';
+        evalEntry.scores = result.scores;
+        evalEntry.criterionComments = result.criterionComments || {};
+        evalEntry.comments = result.comments;
+        evalEntry.totalScore = Object.values(result.scores).reduce((sum, val) => sum + (val || 0), 0);
         project.markModified('evaluations');
         return project.save();
     }
@@ -109,6 +110,15 @@ let ProjectsService = class ProjectsService {
         if (!project)
             throw new common_1.NotFoundException('Proyecto no encontrado o no tienes permiso');
         return project;
+    }
+    async remove(id, userId) {
+        const project = await this.projectModel.findOne({ _id: id, investigadorPrincipal: userId }).exec();
+        if (!project)
+            throw new common_1.NotFoundException('Proyecto no encontrado o no tienes permiso');
+        if (project.status !== project_schema_1.ProjectStatus.BORRADOR) {
+            throw new common_1.BadRequestException('No puedes eliminar un proyecto que ya no está en estado borrador');
+        }
+        await this.projectModel.findByIdAndDelete(id).exec();
     }
 };
 exports.ProjectsService = ProjectsService;

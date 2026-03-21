@@ -22,6 +22,9 @@ export class ProjectEvaluation {
   @Prop({ type: Object, default: {} })
   scores: Record<string, number>;
 
+  @Prop({ type: Object, default: {} })
+  criterionComments: Record<string, string>;
+
   @Prop()
   comments: string;
 

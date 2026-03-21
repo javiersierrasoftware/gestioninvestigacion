@@ -71,7 +71,17 @@ let AuthService = class AuthService {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                identificationNumber: user.identificationNumber
+                identificationNumber: user.identificationNumber,
+                facultad: user.facultad,
+                programa: user.programa,
+                mincienciasCategory: user.mincienciasCategory,
+                researchAreas: user.researchAreas,
+                biography: user.biography,
+                birthDate: user.birthDate,
+                mesVinculacion: user.mesVinculacion,
+                anoVinculacion: user.anoVinculacion,
+                tipoContrato: user.tipoContrato,
+                cvlacUrl: user.cvlacUrl
             }
         };
     }

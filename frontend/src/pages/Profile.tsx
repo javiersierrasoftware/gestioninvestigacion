@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Phone, Lock, Book, GraduationCap, Award, FileText, Save, Loader2, ShieldCheck, UserCircle, Briefcase, X } from 'lucide-react';
+import { User, Mail, Phone, Lock, GraduationCap, Award, FileText, Save, Loader2, ShieldCheck, UserCircle, Briefcase, X } from 'lucide-react';
 import api from '../api/axios';
 
 export const Profile = () => {
@@ -19,6 +19,11 @@ export const Profile = () => {
     mincienciasCategory: 'No Categorizado',
     researchAreas: '',
     biography: '',
+    birthDate: '',
+    mesVinculacion: '',
+    anoVinculacion: '',
+    tipoContrato: 'Profesor de planta',
+    cvlacUrl: '',
     password: '',
     confirmPassword: ''
   });
@@ -35,7 +40,12 @@ export const Profile = () => {
         programa: user.programa || '',
         mincienciasCategory: user.mincienciasCategory || 'No Categorizado',
         researchAreas: user.researchAreas || '',
-        biography: user.biography || ''
+        biography: user.biography || '',
+        birthDate: user.birthDate || '',
+        mesVinculacion: user.mesVinculacion || '',
+        anoVinculacion: user.anoVinculacion || '',
+        tipoContrato: user.tipoContrato || 'Profesor de planta',
+        cvlacUrl: user.cvlacUrl || ''
       }));
     }
   }, [user]);
@@ -134,6 +144,10 @@ export const Profile = () => {
                   <input name="phone" type="text" className="form-input pl-10 bg-gray-50/50" value={formData.phone} onChange={handleChange} placeholder="Ej. 310..." />
                 </div>
               </div>
+              <div className="form-group mb-0">
+                <label className="form-label text-[11px] font-bold text-gray-500">Fecha de Nacimiento</label>
+                <input name="birthDate" type="date" className="form-input bg-gray-50/50" value={formData.birthDate} onChange={handleChange} />
+              </div>
             </div>
           </div>
 
@@ -156,10 +170,48 @@ export const Profile = () => {
               </div>
               <div className="form-group mb-0">
                 <label className="form-label text-[11px] font-bold text-gray-500">Programa Académico</label>
-                <div className="relative">
-                  <Book className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-400" size={16} />
-                  <input name="programa" type="text" className="form-input pl-10 bg-gray-50/50" value={formData.programa} onChange={handleChange} placeholder="Ej. Ingeniería de Sistemas" />
+                <select name="programa" className="form-select bg-gray-50/50" value={formData.programa} onChange={handleChange}>
+                   <option value="">Seleccione un programa...</option>
+                   <option>Ingeniería de Sistemas</option>
+                   <option>Ingeniería Industrial</option>
+                   <option>Ingeniería Civil</option>
+                   <option>Biología</option>
+                   <option>Enfermería</option>
+                   <option>Zootecnia</option>
+                   <option>Economía</option>
+                   <option>Administración de Empresas</option>
+                   <option>Contaduría Pública</option>
+                   <option>Derecho</option>
+                   <option>Licenciatura en Matemáticas</option>
+                   <option>Licenciatura en Lenguas Extranjeras</option>
+                   <option>Licenciatura en Pedagogía Infantil</option>
+                   <option>Fonoaudiología</option>
+                </select>
+              </div>
+              <div className="form-group mb-0">
+                <label className="form-label text-[11px] font-bold text-gray-500">Fecha Vinculación Unisucre</label>
+                <div className="flex gap-2">
+                   <select name="mesVinculacion" className="form-select bg-gray-50/50 text-[10px]" value={formData.mesVinculacion} onChange={handleChange}>
+                      <option value="">Mes...</option>
+                      {['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'].map(m => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                   </select>
+                   <select name="anoVinculacion" className="form-select bg-gray-50/50 text-[10px]" value={formData.anoVinculacion} onChange={handleChange}>
+                      <option value="">Año...</option>
+                      {Array.from({ length: 40 }, (_, i) => new Date().getFullYear() - i).map(y => (
+                        <option key={y} value={y}>{y}</option>
+                      ))}
+                   </select>
                 </div>
+              </div>
+              <div className="form-group mb-0">
+                <label className="form-label text-[11px] font-bold text-gray-500">Tipo de Contrato</label>
+                <select name="tipoContrato" className="form-select bg-gray-50/50" value={formData.tipoContrato} onChange={handleChange}>
+                   <option>Profesor de planta</option>
+                   <option>Profesor Ocasional</option>
+                   <option>Profesor de Contrato</option>
+                </select>
               </div>
             </div>
           </div>
@@ -180,6 +232,13 @@ export const Profile = () => {
                    <option value="Investigador Junior">Investigador Junior</option>
                    <option value="No Categorizado">No Categorizado</option>
                 </select>
+              </div>
+              <div className="form-group mb-0">
+                <label className="form-label text-[11px] font-bold text-gray-500">Enlace Perfil CVLAC</label>
+                <div className="relative">
+                  <Award className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-400" size={16} />
+                  <input name="cvlacUrl" type="url" className="form-input pl-10 bg-gray-50/50" value={formData.cvlacUrl} onChange={handleChange} placeholder="https://scienti.minciencias.gov.co/cvlac/..." />
+                </div>
               </div>
               <div className="form-group mb-0">
                 <label className="form-label text-[11px] font-bold text-gray-500">Áreas de Investigación (Separadas por Coma)</label>

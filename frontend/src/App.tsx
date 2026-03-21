@@ -14,6 +14,8 @@ const ProduccionDocente = React.lazy(() => import('./pages/ProduccionDocente').t
 const PanelCiarp = React.lazy(() => import('./pages/PanelCiarp').then(m => ({ default: m.PanelCiarp })));
 const RadicacionDocente = React.lazy(() => import('./pages/RadicacionDocente').then(m => ({ default: m.RadicacionDocente })));
 const GruposInvestigacion = React.lazy(() => import('./pages/GruposInvestigacion').then(m => ({ default: m.GruposInvestigacion })));
+const InvestigadoresAdmin = React.lazy(() => import('./pages/InvestigadoresAdmin').then(m => ({ default: m.InvestigadoresAdmin })));
+const Dashboard = React.lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Profile = React.lazy(() => import('./pages/Profile').then(m => ({ default: m.Profile })));
 
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) => {
@@ -110,7 +112,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               {(user?.role === 'docente' || user?.role === 'evaluador') && (
                 <Link to="/docente/evaluaciones" className="flex items-center gap-2 px-5 py-3 rounded-lg hover:bg-emerald-100 text-emerald-700 transition-colors font-bold text-sm">
                   <FileSignature size={18} className="text-emerald-600" />
-                  <span>Mis Evaluaciones</span>
+                  <span>Rol Evaluador Proyectos</span>
                 </Link>
               )}
 
@@ -134,6 +136,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   <Link to="/admin/grupos" className="flex items-center gap-2 px-5 py-3 rounded-lg hover:bg-emerald-100 text-emerald-700 transition-colors font-bold text-sm">
                     <Users size={18} className="text-emerald-600" />
                     <span>Grupos</span>
+                  </Link>
+                  <Link to="/admin/investigadores" className="flex items-center gap-2 px-5 py-3 rounded-lg hover:bg-emerald-100 text-emerald-700 transition-colors font-bold text-sm">
+                    <User size={18} className="text-emerald-600" />
+                    <span>Investigadores</span>
                   </Link>
                 </>
               )}
@@ -410,6 +416,12 @@ const App = () => {
               </ProtectedRoute>
             } />
 
+            <Route path="/admin/investigadores" element={
+              <ProtectedRoute allowedRoles={['admin', 'division_investigacion']}>
+                <InvestigadoresAdmin />
+              </ProtectedRoute>
+            } />
+
             <Route path="/radicacion" element={
               <ProtectedRoute allowedRoles={['docente', 'admin']}>
                 <RadicacionDocente />
@@ -436,9 +448,7 @@ const App = () => {
 
             <Route path="/dashboard" element={
               <ProtectedRoute>
-                <div className="card animate-fade-in w-full text-center mt-10">
-                  <h2 className="heading-2">Dashboard del Docente (Próximamente)</h2>
-                </div>
+                <Dashboard />
               </ProtectedRoute>
             } />
 

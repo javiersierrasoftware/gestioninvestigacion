@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Project, ProjectDocument, ProjectStatus } from './schemas/project.schema';
@@ -50,7 +50,7 @@ export class ProjectsService {
     const existingEvalIds = project.evaluations?.map(e => e.evaluator.toString()) || [];
     const newEvals = evaluatorIds
        .filter(id => !existingEvalIds.includes(id))
-       .map(id => ({ evaluator: id as any, status: 'pendiente', scores: {}, comments: '', totalScore: 0 }));
+       .map(id => ({ evaluator: id as any, status: 'pendiente', scores: {}, criterionComments: {}, comments: '', totalScore: 0 }));
        
     if (newEvals.length > 0) {
       if(!project.evaluations) project.evaluations = [];
@@ -64,7 +64,7 @@ export class ProjectsService {
       .exec() as any;
   }
 
-  async submitEvaluation(projectId: string, evaluatorId: string, result: { scores: Record<string, number>, comments: string, status: string }): Promise<Project> {
+  async submitEvaluation(projectId: string, evaluatorId: string, result: { scores: Record<string, number>, criterionComments?: Record<string, string>, comments: string, status: string }): Promise<Project> {
     const project = await this.projectModel.findById(projectId).exec();
     if (!project) throw new NotFoundException('Proyecto no encontrado');
 
@@ -72,11 +72,12 @@ export class ProjectsService {
     const evalIndex = project.evaluations.findIndex(e => e.evaluator.toString() === evaluatorId);
     if(evalIndex === -1) throw new NotFoundException('No estás asignado como evaluador a este proyecto');
 
-    const totalScore = Object.values(result.scores).reduce((a, b) => a + Number(b), 0);
-    project.evaluations[evalIndex].scores = result.scores;
-    project.evaluations[evalIndex].comments = result.comments;
-    project.evaluations[evalIndex].totalScore = totalScore;
-    project.evaluations[evalIndex].status = result.status || 'evaluado';
+    const evalEntry = project.evaluations[evalIndex];
+    evalEntry.status = result.status || 'evaluado';
+    evalEntry.scores = result.scores;
+    evalEntry.criterionComments = result.criterionComments || {};
+    evalEntry.comments = result.comments;
+    evalEntry.totalScore = Object.values(result.scores).reduce((sum, val) => sum + (val || 0), 0);
 
     project.markModified('evaluations');
     return project.save();
@@ -108,5 +109,17 @@ export class ProjectsService {
     ).exec();
     if (!project) throw new NotFoundException('Proyecto no encontrado o no tienes permiso');
     return project;
+  }
+  
+  async remove(id: string, userId: string): Promise<void> {
+    const project = await this.projectModel.findOne({ _id: id, investigadorPrincipal: userId }).exec();
+    if (!project) throw new NotFoundException('Proyecto no encontrado o no tienes permiso');
+    
+    // Opcional: Solo permitir borrar si es borrador
+    if (project.status !== ProjectStatus.BORRADOR) {
+      throw new BadRequestException('No puedes eliminar un proyecto que ya no está en estado borrador');
+    }
+    
+    await this.projectModel.findByIdAndDelete(id).exec();
   }
 }

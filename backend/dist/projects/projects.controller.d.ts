@@ -18,4 +18,5 @@ export declare class ProjectsController {
     }, req: any): Promise<import("./schemas/project.schema").Project>;
     findOne(id: string): Promise<import("./schemas/project.schema").Project>;
     update(id: string, updateProjectDto: any, req: any): Promise<import("./schemas/project.schema").Project>;
+    remove(id: string, req: any): Promise<void>;
 }

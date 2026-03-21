@@ -24,6 +24,7 @@ let ProjectEvaluation = class ProjectEvaluation {
     evaluator;
     status;
     scores;
+    criterionComments;
     comments;
     totalScore;
 };
@@ -40,6 +41,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: Object, default: {} }),
     __metadata("design:type", Object)
 ], ProjectEvaluation.prototype, "scores", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: Object, default: {} }),
+    __metadata("design:type", Object)
+], ProjectEvaluation.prototype, "criterionComments", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)

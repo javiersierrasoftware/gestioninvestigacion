@@ -11,6 +11,7 @@ export declare class ProjectEvaluation {
     evaluator: Types.ObjectId;
     status: string;
     scores: Record<string, number>;
+    criterionComments: Record<string, string>;
     comments: string;
     totalScore: number;
 }
@@ -52,6 +53,15 @@ export declare const ProjectEvaluationSchema: import("mongoose").Schema<ProjectE
         id: string;
     }> | undefined;
     scores?: import("mongoose").SchemaDefinitionProperty<Record<string, number>, ProjectEvaluation, Document<unknown, {}, ProjectEvaluation, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<ProjectEvaluation & {
+        _id: Types.ObjectId;
+    } & {
+        __v: number;
+    }, "id"> & {
+        id: string;
+    }> | undefined;
+    criterionComments?: import("mongoose").SchemaDefinitionProperty<Record<string, string>, ProjectEvaluation, Document<unknown, {}, ProjectEvaluation, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<ProjectEvaluation & {
         _id: Types.ObjectId;
