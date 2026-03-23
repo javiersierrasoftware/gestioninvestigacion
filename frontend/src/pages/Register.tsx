@@ -14,12 +14,19 @@ export const Register = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+
+    // Sanitizar Identificación: solo números
+    if (name === 'identificationNumber') {
+      value = value.replace(/\D/g, ''); // Elimina cualquier cosa que no sea un dígito
+    }
+
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,7 +59,7 @@ export const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[85vh] w-full px-4 animate-fade-in py-12">
+    <div className="flex flex-col items-center justify-center w-full px-4 animate-fade-in pt-32 pb-48 mb-12 mt-10">
       <div className="bg-white p-10 rounded-3xl shadow-2xl border border-slate-100 w-full relative overflow-hidden" style={{ maxWidth: '540px' }}>
         {/* Accent Decor */}
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-primary-600"></div>
@@ -63,7 +70,7 @@ export const Register = () => {
               <UserPlus size={32} strokeWidth={2.5} />
             </div>
           </div>
-          <h2 className="text-3xl font-black text-slate-800 tracking-tight mb-2">Registro de Investigador</h2>
+          <h2 className="text-3xl font-black text-slate-800 tracking-tight mb-2">Registro</h2>
           <p className="text-slate-500 text-sm font-medium">Únase al ecosistema de investigación de la Univ. de Sucre</p>
         </div>
 
@@ -78,13 +85,13 @@ export const Register = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
             <div className="space-y-2.5" style={{ display: 'flex', flexDirection: 'column' }}>
               <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.1em] ml-1" htmlFor="name">Nombre Completo</label>
-              <input 
+              <input
                 id="name"
                 name="name"
-                type="text" 
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-emerald-500 transition-all outline-none text-slate-700 text-sm font-medium" 
+                type="text"
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-emerald-500 transition-all outline-none text-slate-700 text-sm font-medium"
                 style={{ padding: '1.15rem 1.5rem', marginTop: '0.625rem', border: '1px solid #e2e8f0' }}
-                placeholder="Juan Pérez"
+                placeholder="Ingrese su Nombre Completo"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -93,13 +100,15 @@ export const Register = () => {
 
             <div className="space-y-2.5" style={{ display: 'flex', flexDirection: 'column' }}>
               <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.1em] ml-1" htmlFor="identificationNumber">Identificación (C.C)</label>
-              <input 
+              <input
                 id="identificationNumber"
                 name="identificationNumber"
-                type="text" 
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-emerald-500 transition-all outline-none text-slate-700 text-sm font-medium" 
+                type="text"
+                inputMode="numeric"
+                pattern="\d*"
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-emerald-500 transition-all outline-none text-slate-700 text-sm font-medium"
                 style={{ padding: '1.15rem 1.5rem', marginTop: '0.625rem', border: '1px solid #e2e8f0' }}
-                placeholder="1.000.000.000"
+                placeholder="1000000000"
                 value={formData.identificationNumber}
                 onChange={handleChange}
                 required
@@ -109,11 +118,11 @@ export const Register = () => {
 
           <div className="space-y-2.5" style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column' }}>
             <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.1em] ml-1" htmlFor="email">Correo Institucional</label>
-            <input 
+            <input
               id="email"
               name="email"
-              type="email" 
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-emerald-500 transition-all outline-none text-slate-700 text-sm font-medium" 
+              type="email"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-emerald-500 transition-all outline-none text-slate-700 text-sm font-medium"
               style={{ padding: '1.15rem 1.5rem', marginTop: '0.625rem', border: '1px solid #e2e8f0' }}
               placeholder="docente@unisucre.edu.co"
               value={formData.email}
@@ -124,11 +133,11 @@ export const Register = () => {
 
           <div className="space-y-2.5" style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column' }}>
             <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.1em] ml-1" htmlFor="password">Contraseña de acceso</label>
-            <input 
+            <input
               id="password"
               name="password"
-              type="password" 
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-emerald-500 transition-all outline-none text-slate-700 text-sm font-medium" 
+              type="password"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-emerald-500 transition-all outline-none text-slate-700 text-sm font-medium"
               style={{ padding: '1.15rem 1.5rem', marginTop: '0.625rem', border: '1px solid #e2e8f0' }}
               placeholder="Mínimo 6 caracteres"
               value={formData.password}
@@ -138,21 +147,21 @@ export const Register = () => {
             />
           </div>
 
-          <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-2xl text-[11px] text-emerald-800 leading-relaxed font-bold italic shadow-sm" style={{ backgroundColor: '#ecfdf5', padding: '1.25rem', borderRadius: '1rem', border: '1px solid #d1fae5', marginBottom: '1.5rem', display: 'flex' }}>
+          <div className="bg-emerald-50 border border-emerald-100 p-5 rounded-2xl text-[9px] text-emerald-800 leading-relaxed font-normal shadow-sm" style={{ backgroundColor: '#ecfdf5', padding: '1.25rem', borderRadius: '1rem', border: '1px solid #d1fae5', marginBottom: '1.5rem', display: 'flex' }}>
             <div className="flex gap-3" style={{ display: 'flex', gap: '12px' }}>
               <div style={{ width: '4px', backgroundColor: '#34d399', borderRadius: '9999px', flexShrink: 0 }}></div>
               <p>Al registrarse, usted declara que los datos suministrados son verídicos y que su perfil quedará habilitado bajo el rol de Docente Investigador.</p>
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-xl shadow-emerald-200 hover:shadow-2xl hover:-translate-y-1 mt-2 font-black text-xs uppercase tracking-[0.2em] transition-all disabled:opacity-70"
-            style={{ 
-              padding: '1.25rem', 
-              backgroundColor: '#059669', 
-              color: '#ffffff', 
-              border: 'none', 
+            style={{
+              padding: '1.25rem',
+              backgroundColor: '#059669',
+              color: '#ffffff',
+              border: 'none',
               cursor: 'pointer',
               display: 'block'
             }}
@@ -168,7 +177,7 @@ export const Register = () => {
         </form>
 
         <div className="text-center text-[12px] text-slate-400 border-t border-slate-100" style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #f1f5f9', textAlign: 'center' }}>
-          ¿Ya tiene una cuenta activa? <br/>
+          ¿Ya tiene una cuenta activa? <br />
           <Link to="/login" className="text-emerald-600 font-black hover:text-emerald-700 hover:underline uppercase tracking-tight text-[11px] mt-2 inline-block">Iniciar sesión ahora</Link>
         </div>
       </div>

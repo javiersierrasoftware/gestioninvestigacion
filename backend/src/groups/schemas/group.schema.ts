@@ -18,6 +18,9 @@ export class Group {
   leaderName: string;
 
   @Prop()
+  leaderEmail: string;
+
+  @Prop()
   grupLAC: string;
 
   @Prop()

@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
-import { FileText, CheckCircle, Clock, X, Award } from 'lucide-react';
+import { 
+  FileText, CheckCircle, Clock, X, Award, Search, Download, Settings2, 
+  ChevronDown, Eye, EyeOff, LayoutDashboard
+} from 'lucide-react';
 
 export const MisEvaluaciones = () => {
   const { user } = useAuth();
@@ -14,6 +17,19 @@ export const MisEvaluaciones = () => {
   const [scores, setScores] = useState<Record<string, number>>({});
   const [criterionComments, setCriterionComments] = useState<Record<string, string>>({});
   const [comments, setComments] = useState('');
+  
+  // Table tools states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterProject, setFilterProject] = useState('');
+  const [filterConvocatoria, setFilterConvocatoria] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [visibleColumns, setVisibleColumns] = useState({
+    proyecto: true,
+    convocatoria: true,
+    estado: true,
+    accion: true
+  });
+  const [showColumnMenu, setShowColumnMenu] = useState(false);
 
   useEffect(() => {
     fetchEvaluations();
@@ -104,65 +120,272 @@ export const MisEvaluaciones = () => {
     <div className="animate-fade-in pb-10 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Mis Evaluaciones Asignadas</h1>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight flex items-center gap-3">
+             <LayoutDashboard size={32} className="text-emerald-600" />
+             Mis Evaluaciones Asignadas
+          </h1>
           <p className="text-slate-500 font-medium text-sm mt-1">Lista de proyectos en los que se le ha designado como Par Evaluador.</p>
         </div>
       </div>
 
-      {projects.length === 0 ? (
-        <div className="card text-center py-16 bg-white border border-dashed border-gray-200 shadow-none">
-          <FileText size={48} className="mx-auto text-gray-300 mb-3" />
-          <p className="text-lg font-bold text-gray-600">No tiene proyectos asignados</p>
-          <p className="text-sm text-gray-400">Cuando la División de Investigación le asigne un proyecto, aparecerá aquí.</p>
+      <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 mb-10 overflow-hidden">
+        <div className="flex flex-col md:flex-row gap-4 p-6 bg-white border-b border-slate-100">
+          <div 
+            className="flex-1 flex items-center gap-3 shadow-sm bg-white"
+            style={{ 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '6px', 
+              padding: '0 12px',
+              height: '36px'
+            }}
+          >
+            <Search size={14} className="text-gray-400" />
+            <input 
+              type="text" 
+              placeholder="Buscar por proyecto, convocatoria o estado..." 
+              className="w-full font-medium text-slate-700 outline-none placeholder:text-slate-400"
+              style={{ 
+                background: 'transparent',
+                border: 'none', 
+                outline: 'none', 
+                fontSize: '9.5px',
+                height: '100%',
+                textTransform: 'uppercase'
+              }}
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-row gap-2">
+            <div className="relative">
+              <button 
+                className="shadow-sm flex items-center justify-center gap-2 font-bold uppercase tracking-tight transition-all active:scale-95"
+                style={{
+                  backgroundColor: showColumnMenu ? '#f8fafc' : '#ffffff',
+                  color: showColumnMenu ? '#0f172a' : '#64748b',
+                  border: showColumnMenu ? '1px solid #cbd5e1' : '1px solid #e2e8f0',
+                  borderRadius: '6px',
+                  padding: '0 16px',
+                  fontSize: '9.5px',
+                  height: '36px',
+                  minWidth: '120px'
+                }}
+                onClick={() => setShowColumnMenu(!showColumnMenu)}
+              >
+                <Settings2 size={13} className={showColumnMenu ? 'text-primary-600' : ''} />
+                <span>Columnas</span>
+                <ChevronDown size={11} className={`transition-transform duration-200 ${showColumnMenu ? 'rotate-180' : ''}`} />
+              </button>
+
+              {showColumnMenu && (
+                <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-2xl shadow-slate-900/15 border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div className="bg-slate-50/80 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="bg-emerald-100 text-emerald-600 p-1.5 rounded-lg">
+                        <Settings2 size={14} />
+                      </div>
+                      <span className="text-[11px] font-black text-slate-700 uppercase tracking-widest leading-none">Configurar Vista</span>
+                    </div>
+                    <button onClick={() => setShowColumnMenu(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1">
+                      <X size={14} />
+                    </button>
+                  </div>
+
+                  <div className="p-2 space-y-1">
+                    {[
+                      { id: 'proyecto', label: 'Proyecto a Evaluar' },
+                      { id: 'convocatoria', label: 'Convocatoria Raíz' },
+                      { id: 'estado', label: 'Estado Evaluación' },
+                      { id: 'accion', label: 'Botón de Acción' }
+                    ].map(col => (
+                      <label key={col.id} className="flex items-center justify-between px-3 py-2.5 hover:bg-emerald-50/50 rounded-xl cursor-pointer transition-all group relative overflow-hidden">
+                        <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors ${visibleColumns[col.id as keyof typeof visibleColumns] ? 'text-slate-800' : 'text-slate-400'}`}>
+                          {col.label}
+                        </span>
+                        <input 
+                          type="checkbox" 
+                          className="hidden" 
+                          checked={visibleColumns[col.id as keyof typeof visibleColumns]} 
+                          onChange={() => setVisibleColumns(prev => ({ ...prev, [col.id]: !prev[col.id as keyof typeof prev] }))}
+                        />
+                        <div className={`p-1.5 rounded-lg transition-all duration-300 ${visibleColumns[col.id as keyof typeof visibleColumns] ? 'text-emerald-600 bg-emerald-100 shadow-sm shadow-emerald-200/50 scale-110' : 'text-slate-300 bg-slate-100'}`}>
+                          {visibleColumns[col.id as keyof typeof visibleColumns] ? <Eye size={14} /> : <EyeOff size={14} />}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+
+                  <div className="bg-slate-50/50 px-5 py-3 border-t border-slate-100">
+                    <p className="text-[9px] text-slate-400 font-bold italic leading-tight uppercase tracking-tighter text-center">
+                      Seleccione los campos a visualizar en sus compromisos evaluativos.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button 
+              className="shadow-sm flex items-center justify-center gap-2 font-bold uppercase tracking-tight transition-all active:scale-95"
+              style={{
+                backgroundColor: '#ffffff',
+                color: '#64748b',
+                border: '1px solid #e2e8f0',
+                borderRadius: '6px',
+                padding: '0 16px',
+                fontSize: '9.5px',
+                height: '36px',
+                minWidth: '120px'
+              }}
+              onClick={() => {
+                const rows = projects.map(p => [p.title, p.convocatoria?.title, p.status]);
+                let csvContent = "data:text/csv;charset=utf-8,Proyecto,Convocatoria,Estado\n" 
+                  + rows.map(e => e.join(",")).join("\n");
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `Mis_Evaluaciones_${user?.name?.replace(/ /g, '_')}.csv`);
+                document.body.appendChild(link);
+                link.click();
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#ecfdf5'; e.currentTarget.style.color = '#047857'; e.currentTarget.style.borderColor = '#dcfce7'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#ffffff'; e.currentTarget.style.color = '#64748b'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
+            >
+              <Download size={13} className="text-emerald-600" />
+              <span>Exportar</span>
+            </button>
+          </div>
         </div>
-      ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-border-color overflow-hidden">
-          <table className="w-full text-left border-collapse min-w-[800px]">
-            <thead>
-              <tr className="bg-gray-50 border-b text-xs uppercase text-gray-500">
-                <th className="p-4 font-bold">Proyecto a Evaluar</th>
-                <th className="p-4 font-bold">Convocatoria Raíz</th>
-                <th className="p-4 font-bold">Estado de su Evaluación</th>
-                <th className="p-4 font-bold text-right">Acción</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 text-sm">
-              {projects.map(proj => {
-                const myEval = getMyEvalState(proj);
-                const isEvaluado = myEval.status === 'evaluado';
-                return (
-                  <tr key={proj._id} className="hover:bg-primary-50/30 transition-colors">
-                    <td className="p-4 font-medium text-gray-800 max-w-[250px] truncate" title={proj.title}>
-                      {proj.title}
-                    </td>
-                    <td className="p-4 text-gray-600">
-                      {proj.convocatoria?.title}
-                    </td>
-                    <td className="p-4">
-                      {isEvaluado ? (
-                        <span className="badge badge-success bg-[#32965D]/10 text-[#32965D] border border-[#32965D]/20"><CheckCircle size={12} className="mr-1"/> Calificado ({myEval.totalScore} pts)</span>
-                      ) : myEval.status === 'evaluando' ? (
-                        <span className="badge badge-warning bg-blue-50 text-blue-600 border border-blue-200"><Clock size={12} className="mr-1"/> En progreso (Borrador)</span>
-                      ) : (
-                        <span className="badge badge-warning bg-orange-50 text-orange-600 border border-orange-200"><Clock size={12} className="mr-1"/> Pendiente por evaluar</span>
+
+        {projects.length === 0 ? (
+          <div className="card text-center py-16 bg-white border border-dashed border-gray-200 shadow-none m-6">
+            <FileText size={48} className="mx-auto text-gray-300 mb-3" />
+            <p className="text-lg font-bold text-gray-600">No tiene proyectos asignados</p>
+            <p className="text-sm text-gray-400">Cuando la División de Investigación le asigne un proyecto, aparecerá aquí.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50/80 border-b border-slate-100">
+                  {visibleColumns.proyecto && <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest" style={{ fontSize: '11px' }}>Proyecto a Evaluar</th>}
+                  {visibleColumns.convocatoria && <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest" style={{ fontSize: '11px' }}>Convocatoria Raíz</th>}
+                  {visibleColumns.estado && <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest" style={{ fontSize: '11px' }}>Estado de su Evaluación</th>}
+                  {visibleColumns.accion && <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest text-right" style={{ fontSize: '11px' }}>Acción</th>}
+                </tr>
+                {/* Filter Row */}
+                <tr className="bg-white/50 border-b border-slate-100/50" style={{ borderBottom: '1px solid #e2e8f0' }}>
+                  {visibleColumns.proyecto && (
+                    <th className="px-4 py-2">
+                      <input 
+                        type="text"
+                        placeholder="Filtrar proyecto..."
+                        className="w-full font-medium text-slate-500 outline-none transition-all placeholder:text-slate-300 border border-slate-200 rounded px-2 py-1"
+                        style={{ fontSize: '11px', height: '28px' }}
+                        value={filterProject}
+                        onChange={e => setFilterProject(e.target.value)}
+                      />
+                    </th>
+                  )}
+                  {visibleColumns.convocatoria && (
+                    <th className="px-4 py-2">
+                      <input 
+                        type="text"
+                        placeholder="Filtrar convocatoria..."
+                        className="w-full font-medium text-slate-500 outline-none transition-all placeholder:text-slate-300 border border-slate-200 rounded px-2 py-1"
+                        style={{ fontSize: '11px', height: '28px' }}
+                        value={filterConvocatoria}
+                        onChange={e => setFilterConvocatoria(e.target.value)}
+                      />
+                    </th>
+                  )}
+                  {visibleColumns.estado && (
+                    <th className="px-4 py-2">
+                      <select 
+                        className="w-full bg-white border border-slate-200 rounded px-2 py-1 text-slate-500 outline-none transition-all"
+                        style={{ fontSize: '11px', height: '28px' }}
+                        value={filterStatus}
+                        onChange={e => setFilterStatus(e.target.value)}
+                      >
+                        <option value="">Estado...</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="evaluando">En progreso</option>
+                        <option value="evaluado">Calificado</option>
+                      </select>
+                    </th>
+                  )}
+                  {visibleColumns.accion && <th className="px-4 py-2"></th>}
+                </tr>
+              </thead>
+              <tbody className="bg-white">
+                {projects.filter(p => {
+                  const searchLower = searchTerm.toLowerCase();
+                  const myEval = getMyEvalState(p);
+                  const matchSearch = p.title?.toLowerCase().includes(searchLower) || 
+                                     p.convocatoria?.title?.toLowerCase().includes(searchLower);
+                  
+                  const matchProject = filterProject ? p.title?.toLowerCase().includes(filterProject.toLowerCase()) : true;
+                  const matchConvocatoria = filterConvocatoria ? p.convocatoria?.title?.toLowerCase().includes(filterConvocatoria.toLowerCase()) : true;
+                  const matchStatus = filterStatus ? myEval.status?.toLowerCase().includes(filterStatus.toLowerCase()) : true;
+                  
+                  return matchSearch && matchProject && matchConvocatoria && matchStatus;
+                }).map(proj => {
+                  const myEval = getMyEvalState(proj);
+                  const isEvaluado = myEval.status === 'evaluado';
+                  return (
+                    <tr 
+                      key={proj._id} 
+                      className="transition-all duration-200 text-slate-700 hover:bg-emerald-50/30" 
+                      style={{ fontSize: '12px' }}
+                    >
+                      {visibleColumns.proyecto && (
+                        <td className="px-6 py-5 font-black text-slate-800 uppercase tracking-tight leading-tight" style={{ borderBottom: '1px solid #dcfce7' }}>
+                          {proj.title}
+                        </td>
                       )}
-                    </td>
-                    <td className="p-4 text-right">
-                      {isEvaluado ? (
-                        <button className="btn btn-outline py-1.5 px-3 text-xs" onClick={() => handleOpenEvaluation(proj)}>Ver mi dictamen</button>
-                      ) : (
-                        <button className="btn btn-primary py-1.5 px-3 text-xs shadow-sm bg-primary-600" onClick={() => handleOpenEvaluation(proj)}>
-                          <Award size={14} className="mr-1" /> Entrar a Calificar
-                        </button>
+                      {visibleColumns.convocatoria && (
+                        <td className="px-6 py-5 text-slate-500 font-bold" style={{ borderBottom: '1px solid #dcfce7' }}>
+                          {proj.convocatoria?.title}
+                        </td>
                       )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+                      {visibleColumns.estado && (
+                        <td className="px-6 py-5" style={{ borderBottom: '1px solid #dcfce7' }}>
+                          <div className="flex items-center">
+                            {isEvaluado ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-black uppercase tracking-widest text-[9px] bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                <CheckCircle size={12} className="mr-1"/> Calificado ({myEval.totalScore} pts)
+                              </span>
+                            ) : myEval.status === 'evaluando' ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-black uppercase tracking-widest text-[9px] bg-blue-50 text-blue-600 border border-blue-200">
+                                <Clock size={12} className="mr-1"/> En progreso (Borrador)
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-black uppercase tracking-widest text-[9px] bg-orange-50 text-orange-600 border border-orange-200">
+                                <Clock size={12} className="mr-1"/> Pendiente por evaluar
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                      )}
+                      {visibleColumns.accion && (
+                        <td className="px-6 py-5 text-right" style={{ borderBottom: '1px solid #dcfce7' }}>
+                          {isEvaluado ? (
+                            <button className="px-4 py-2 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 text-[10px] font-black uppercase tracking-wider rounded-lg shadow-sm transition-all shadow-slate-200/50 active:scale-95" onClick={() => handleOpenEvaluation(proj)}>Ver mi dictamen</button>
+                          ) : (
+                            <button className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase tracking-wider rounded-lg shadow-lg shadow-emerald-500/20 active:scale-95 transition-all inline-flex items-center" onClick={() => handleOpenEvaluation(proj)}>
+                              <Award size={14} className="mr-2" /> Entrar a Calificar
+                            </button>
+                          )}
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       {/* FULLSCREEN EVALUATION SPLIT-VIEW MODAL */}
       {activeProject && createPortal(

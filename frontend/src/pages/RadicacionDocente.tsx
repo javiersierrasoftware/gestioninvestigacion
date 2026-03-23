@@ -142,9 +142,9 @@ export const RadicacionDocente = () => {
   const handleDeleteProject = async (projectId: string) => {
     if (!window.confirm('¿Estás seguro de que deseas eliminar este borrador? Esta acción no se puede deshacer.')) return;
     try {
-      const res = await fetch(`${API_URL}/projects/${projectId}`, { 
+      const res = await fetch(`${API_URL}/projects/${projectId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` } 
+        headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
         fetchMisProyectos();
@@ -356,7 +356,7 @@ export const RadicacionDocente = () => {
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    
+
     // Date
     const today = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
     doc.text(`Sincelejo, ${today}`, 14, yPos);
@@ -378,19 +378,19 @@ export const RadicacionDocente = () => {
     doc.text(`Investigador Principal`, 14, yPos);
     yPos += 6;
     doc.text(`Correo Electrónico: ${piEmail}`, 14, yPos);
-    if(mainGroup) {
-       yPos += 6;
-       doc.text(`Grupo de Investigación: ${mainGroup.name}`, 14, yPos);
+    if (mainGroup) {
+      yPos += 6;
+      doc.text(`Grupo de Investigación: ${mainGroup.name}`, 14, yPos);
     }
-    
+
     yPos += 15;
     doc.setFont('helvetica', 'bold');
     doc.text(`Asunto: Dictamen Favorable de Aprobación de Proyecto de Investigación.`, 14, yPos);
-    
+
     yPos += 15;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
-    
+
     const bodyText = `Respetado Investigador,\n\nLa División de Investigación de la Universidad de Sucre le informa de manera oficial que, una vez culminado el proceso de revisión y evaluación por pares académicos ciegos, su propuesta adscrita a los términos de referencia de la Convocatoria " ${proj.convocatoria?.title} (${proj.convocatoria?.year}) " ha sido APROBADA.`;
     const splitBody = doc.splitTextToSize(bodyText, 182);
     doc.text(splitBody, 14, yPos);
@@ -399,7 +399,7 @@ export const RadicacionDocente = () => {
     // Summary Box
     doc.setFillColor(245, 245, 245);
     doc.rect(14, yPos, 182, 35, 'F');
-    
+
     doc.setFontSize(10);
     autoTable(doc, {
       startY: yPos + 5,
@@ -412,21 +412,21 @@ export const RadicacionDocente = () => {
       styles: { fontSize: 10, cellPadding: 2, fillColor: [245, 245, 245] },
       columnStyles: { 0: { fontStyle: 'bold', cellWidth: 55 } }
     });
-    
+
     yPos = (doc as any).lastAutoTable.finalY + 15;
-    
+
     if (proj.resolutionComments) {
-       doc.setFont('helvetica', 'bold');
-       doc.setFontSize(11);
-       doc.text(`Observaciones de la Resolución Institucional:`, 14, yPos);
-       yPos += 6;
-       doc.setFont('helvetica', 'italic');
-       doc.setFontSize(10);
-       const splitObs = doc.splitTextToSize(`"${proj.resolutionComments}"`, 182);
-       doc.text(splitObs, 14, yPos);
-       yPos += (splitObs.length * 5) + 10;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text(`Observaciones de la Resolución Institucional:`, 14, yPos);
+      yPos += 6;
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(10);
+      const splitObs = doc.splitTextToSize(`"${proj.resolutionComments}"`, 182);
+      doc.text(splitObs, 14, yPos);
+      yPos += (splitObs.length * 5) + 10;
     }
-    
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
     const finalCopy = `Con esta resolución, el proyecto queda amparado bajo la normativa investigativa actual y se autoriza el inicio de su fase de ejecución. Para dar cumplimiento a sus actividades contractuales y programáticas exigidas por la Convocatoria, le solicitamos permanecer atento a los canales virtuales.\n\nFelicidades por su contribución al tejido investigativo de la universidad.`;
@@ -434,7 +434,7 @@ export const RadicacionDocente = () => {
     doc.text(splitFinal, 14, yPos);
 
     yPos += (splitFinal.length * 5) + 30;
-    
+
     doc.setFont('helvetica', 'bold');
     doc.text(`_____________________________________`, 14, yPos);
     yPos += 6;
@@ -443,7 +443,7 @@ export const RadicacionDocente = () => {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.text(`Universidad de Sucre`, 14, yPos);
-    
+
     // Watermark
     doc.setTextColor(200, 200, 200);
     doc.setFontSize(50);
@@ -456,7 +456,7 @@ export const RadicacionDocente = () => {
     if (proj.status === 'aprobado') {
       return generateApprovalLetter(proj);
     }
-    
+
     const doc = new jsPDF();
     let yPos = 20;
 
@@ -675,7 +675,7 @@ export const RadicacionDocente = () => {
     // 5.5. Cronograma de Actividades (New Section)
     if (proj.dynamicResponses['cronograma'] && Array.isArray(proj.dynamicResponses['cronograma']) && proj.dynamicResponses['cronograma'].length > 0) {
       if (yPos > 240) { doc.addPage(); yPos = 20; } else { yPos += 10; }
-      
+
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(50, 150, 93);
@@ -831,170 +831,170 @@ export const RadicacionDocente = () => {
 
       <div style={{ minHeight: '600px' }}>
 
-      {activeTab === 'convocatorias' && (
-        <>
-          {loading ? (
-            <div className="text-center text-secondary py-10">Cargando convocatorias...</div>
-          ) : convocatorias.length === 0 ? (
-            <div className="card text-center py-16">
-              <div className="flex justify-center mb-4 text-primary-200">
-                <Search size={64} />
+        {activeTab === 'convocatorias' && (
+          <>
+            {loading ? (
+              <div className="text-center text-secondary py-10">Cargando convocatorias...</div>
+            ) : convocatorias.length === 0 ? (
+              <div className="card text-center py-16">
+                <div className="flex justify-center mb-4 text-primary-200">
+                  <Search size={64} />
+                </div>
+                <h3 className="heading-3 mb-2">No hay convocatorias abiertas actuales</h3>
+                <p className="text-secondary">La División de Investigación aún no ha liberado oportunidades públicas.</p>
               </div>
-              <h3 className="heading-3 mb-2">No hay convocatorias abiertas actuales</h3>
-              <p className="text-secondary">La División de Investigación aún no ha liberado oportunidades públicas.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {convocatorias.filter(c => c.isActive).map((convo) => (
-                <div key={convo._id} className="bg-white rounded-[32px] border border-slate-100 flex flex-col h-full hover:border-emerald-200 transition-all shadow-sm hover:shadow-md overflow-hidden group">
-                  <div className="p-8 flex-1">
-                    <div style={{ padding: '4px 12px', borderRadius: '9999px', backgroundColor: '#d1fae5', color: '#059669', fontSize: '10px', fontWeight: '900', letterSpacing: '0.05em', border: '1px solid #a7f3d0', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: '4px', marginBottom: '16px' }}>
-                      <CheckCircle size={12} /> Abierta
-                    </div>
-                    <h3 className="font-black text-xl mb-4 leading-tight text-slate-800">{convo.title}</h3>
-                    <p className="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed">{convo.description}</p>
-
-                    <div className="space-y-3 mt-auto text-sm">
-                      <div className="flex items-center gap-3 text-slate-600">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-                          <DollarSign size={16} />
-                        </div>
-                        <span className="font-bold">Financiamiento:</span> ${convo.budgetPerProject.toLocaleString()}
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {convocatorias.filter(c => c.isActive).map((convo) => (
+                  <div key={convo._id} className="bg-white rounded-[32px] border border-slate-100 flex flex-col h-full hover:border-emerald-200 transition-all shadow-sm hover:shadow-md overflow-hidden group">
+                    <div className="p-8 flex-1">
+                      <div style={{ padding: '4px 12px', borderRadius: '9999px', backgroundColor: '#d1fae5', color: '#059669', fontSize: '10px', fontWeight: '900', letterSpacing: '0.05em', border: '1px solid #a7f3d0', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: '4px', marginBottom: '16px' }}>
+                        <CheckCircle size={12} /> Abierta
                       </div>
-                      <div className="flex items-center gap-3 text-slate-600">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-                          <Calendar size={16} />
+                      <h3 className="font-black text-xl mb-4 leading-tight text-slate-800">{convo.title}</h3>
+                      <p className="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed">{convo.description}</p>
+
+                      <div className="space-y-3 mt-auto text-sm">
+                        <div className="flex items-center gap-3 text-slate-600">
+                          <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                            <DollarSign size={16} />
+                          </div>
+                          <span className="font-bold">Financiamiento:</span> ${convo.budgetPerProject.toLocaleString()}
                         </div>
-                        <span className="font-bold">Cierre:</span> {new Date(convo.endDate).toLocaleDateString()}
+                        <div className="flex items-center gap-3 text-slate-600">
+                          <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                            <Calendar size={16} />
+                          </div>
+                          <span className="font-bold">Cierre:</span> {new Date(convo.endDate).toLocaleDateString()}
+                        </div>
                       </div>
                     </div>
+                    <div className="p-6 bg-slate-50/50 border-t border-slate-100 group-hover:bg-emerald-50/30 transition-colors">
+                      <button
+                        className="btn btn-primary w-full py-3 rounded-xl font-black shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
+                        onClick={() => handleStartApplication(convo)}
+                      >
+                        Aplicar / Iniciar Registro <ArrowRight size={18} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="p-6 bg-slate-50/50 border-t border-slate-100 group-hover:bg-emerald-50/30 transition-colors">
-                    <button
-                      className="btn btn-primary w-full py-3 rounded-xl font-black shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
-                      onClick={() => handleStartApplication(convo)}
-                    >
-                      Aplicar / Iniciar Registro <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+                ))}
+              </div>
+            )}
+          </>
+        )}
 
-      {activeTab === 'mis-proyectos' && (
-        <div className="flex flex-col gap-6">
-          {misProyectos.length === 0 ? (
-            <div className="card text-center py-20 bg-white border border-dashed border-gray-200">
-              <FileText size={64} className="mx-auto text-gray-200 mb-4" />
-              <p className="text-xl font-bold text-gray-600">No tienes proyectos registrados</p>
-              <p className="text-sm text-gray-400 mt-2">Tus borradores y propuestas radicadas aparecerán aquí.</p>
-            </div>
-          ) : (
-            misProyectos.map((proj) => {
-              const radDate = new Date(proj.createdAt || new Date()).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' });
-              
-              let daysLeft = null;
-              if (proj.convocatoria?.endDate) {
-                const diff = new Date(proj.convocatoria.endDate).getTime() - new Date().getTime();
-                daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
-              }
+        {activeTab === 'mis-proyectos' && (
+          <div className="flex flex-col gap-6">
+            {misProyectos.length === 0 ? (
+              <div className="card text-center py-20 bg-white border border-dashed border-gray-200">
+                <FileText size={64} className="mx-auto text-gray-200 mb-4" />
+                <p className="text-xl font-bold text-gray-600">No tienes proyectos registrados</p>
+                <p className="text-sm text-gray-400 mt-2">Tus borradores y propuestas radicadas aparecerán aquí.</p>
+              </div>
+            ) : (
+              misProyectos.map((proj) => {
+                const radDate = new Date(proj.createdAt || new Date()).toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' });
 
-              return (
-                <div key={proj._id} className="bg-white rounded-[32px] p-10 shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden group">
-                  {proj.status === 'borrador' && <div className="absolute top-0 right-0 w-24 h-24 -mr-12 -mt-12 bg-amber-500/10 rotate-45 pointer-events-none"></div>}
-                  
-                  <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-4 mb-4">
-                      <h4 className="font-black text-2xl text-slate-800 tracking-tight leading-none">{proj.title || 'Propuesta sin Título'}</h4>
-                      
+                let daysLeft = null;
+                if (proj.convocatoria?.endDate) {
+                  const diff = new Date(proj.convocatoria.endDate).getTime() - new Date().getTime();
+                  daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                }
+
+                return (
+                  <div key={proj._id} className="bg-white rounded-[32px] p-10 shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden group">
+                    {proj.status === 'borrador' && <div className="absolute top-0 right-0 w-24 h-24 -mr-12 -mt-12 bg-amber-500/10 rotate-45 pointer-events-none"></div>}
+
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center gap-4 mb-4">
+                        <h4 className="font-black text-2xl text-slate-800 tracking-tight leading-none">{proj.title || 'Propuesta sin Título'}</h4>
+
+                        {proj.status === 'borrador' && (
+                          <span style={{ padding: '6px 14px', borderRadius: '9999px', backgroundColor: '#fef3c7', color: '#b45309', fontSize: '11px', fontWeight: '900', letterSpacing: '0.05em', border: '1px solid #fde68a', textTransform: 'uppercase' }}>
+                            Borrador
+                          </span>
+                        )}
+                        {(proj.status === 'radicado' || proj.status === 'en_revision') && (
+                          <span style={{ padding: '6px 14px', borderRadius: '9999px', backgroundColor: '#dbeafe', color: '#2563eb', fontSize: '11px', fontWeight: '900', letterSpacing: '0.05em', border: '1px solid #bfdbfe', textTransform: 'uppercase' }}>
+                            Radicado
+                          </span>
+                        )}
+                        {proj.status === 'aprobado' && (
+                          <span style={{ padding: '6px 14px', borderRadius: '9999px', backgroundColor: '#d1fae5', color: '#059669', fontSize: '11px', fontWeight: '900', letterSpacing: '0.05em', border: '1px solid #a7f3d0', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Award size={12} /> Aprobado
+                          </span>
+                        )}
+                        {proj.status === 'rechazado' && (
+                          <span style={{ padding: '6px 14px', borderRadius: '9999px', backgroundColor: '#fee2e2', color: '#dc2626', fontSize: '11px', fontWeight: '900', letterSpacing: '0.05em', border: '1px solid #fecaca', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <X size={12} /> No Aprobado
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-sm text-slate-500 mb-4 line-clamp-2 leading-relaxed">{proj.summary || 'Esta propuesta aún no tiene un resumen ejecutivo redactado.'}</p>
+
+                      <div className="flex flex-wrap items-center gap-y-2 gap-x-6">
+                        <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
+                          <Calendar size={14} className="text-slate-300" />
+                          Creado el: <span className="text-slate-600 font-bold">{radDate}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
+                          <Activity size={14} className="text-slate-300" />
+                          Convocatoria: <span className="text-slate-600 font-bold">{proj.convocatoria?.title}</span>
+                        </div>
+
+                        {daysLeft !== null && proj.status === 'borrador' && (
+                          <div className={`flex items-center gap-2 text-xs font-black ${daysLeft < 5 ? 'text-red-500' : 'text-emerald-700'}`}>
+                            <Clock size={14} className={daysLeft < 5 ? 'animate-pulse' : ''} />
+                            {daysLeft > 0 ? `Cierra en ${daysLeft} día(s)` : 'Convocatoria Cerrada'}
+                          </div>
+                        )}
+                      </div>
+
+                      {(proj.status === 'aprobado' || proj.status === 'rechazado') && proj.resolutionComments && (
+                        <div className="mt-5 bg-slate-50 border border-slate-100 rounded-2xl p-5 text-sm ring-1 ring-slate-200/50">
+                          <h5 className="font-black text-slate-800 mb-2 flex items-center gap-2">
+                            <CheckSquare size={16} className="text-emerald-600" />
+                            Respuesta de Evaluación
+                          </h5>
+                          <p className="text-slate-600 italic">"{proj.resolutionComments}"</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-row md:flex-col lg:flex-row gap-2 flex-shrink-0">
+                      <button
+                        className="flex-1 btn bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2"
+                        onClick={() => generatePDF(proj)}
+                      >
+                        <Download size={16} /> <span className="hidden sm:inline">PDF</span>
+                      </button>
+
                       {proj.status === 'borrador' && (
-                        <span style={{ padding: '6px 14px', borderRadius: '9999px', backgroundColor: '#fef3c7', color: '#b45309', fontSize: '11px', fontWeight: '900', letterSpacing: '0.05em', border: '1px solid #fde68a', textTransform: 'uppercase' }}>
-                          Borrador
-                        </span>
-                      )}
-                      {(proj.status === 'radicado' || proj.status === 'en_revision') && (
-                        <span style={{ padding: '6px 14px', borderRadius: '9999px', backgroundColor: '#dbeafe', color: '#2563eb', fontSize: '11px', fontWeight: '900', letterSpacing: '0.05em', border: '1px solid #bfdbfe', textTransform: 'uppercase' }}>
-                          Radicado
-                        </span>
-                      )}
-                      {proj.status === 'aprobado' && (
-                        <span style={{ padding: '6px 14px', borderRadius: '9999px', backgroundColor: '#d1fae5', color: '#059669', fontSize: '11px', fontWeight: '900', letterSpacing: '0.05em', border: '1px solid #a7f3d0', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Award size={12} /> Aprobado
-                        </span>
-                      )}
-                      {proj.status === 'rechazado' && (
-                        <span style={{ padding: '6px 14px', borderRadius: '9999px', backgroundColor: '#fee2e2', color: '#dc2626', fontSize: '11px', fontWeight: '900', letterSpacing: '0.05em', border: '1px solid #fecaca', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <X size={12} /> No Aprobado
-                        </span>
+                        <>
+                          <button
+                            className="flex-1 btn btn-primary px-5 py-2.5 rounded-xl font-black text-xs shadow-lg hover:shadow-emerald-200 shadow-emerald-500/10 flex items-center justify-center gap-2"
+                            onClick={() => handleEditDraft(proj)}
+                          >
+                            <ArrowRight size={16} /> Editar
+                          </button>
+                          <button
+                            className="btn bg-red-50 text-red-500 hover:bg-red-100 p-2.5 rounded-xl transition-all border border-red-100"
+                            title="Eliminar Borrador"
+                            onClick={() => handleDeleteProject(proj._id)}
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </>
                       )}
                     </div>
-
-                    <p className="text-sm text-slate-500 mb-4 line-clamp-2 leading-relaxed">{proj.summary || 'Esta propuesta aún no tiene un resumen ejecutivo redactado.'}</p>
-                    
-                    <div className="flex flex-wrap items-center gap-y-2 gap-x-6">
-                      <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
-                        <Calendar size={14} className="text-slate-300" />
-                        Creado el: <span className="text-slate-600 font-bold">{radDate}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
-                        <Activity size={14} className="text-slate-300" />
-                        Convocatoria: <span className="text-slate-600 font-bold">{proj.convocatoria?.title}</span>
-                      </div>
-                      
-                      {daysLeft !== null && proj.status === 'borrador' && (
-                        <div className={`flex items-center gap-2 text-xs font-black ${daysLeft < 5 ? 'text-red-500' : 'text-emerald-700'}`}>
-                          <Clock size={14} className={daysLeft < 5 ? 'animate-pulse' : ''} />
-                          {daysLeft > 0 ? `Cierra en ${daysLeft} día(s)` : 'Convocatoria Cerrada'}
-                        </div>
-                      )}
-                    </div>
-
-                    {(proj.status === 'aprobado' || proj.status === 'rechazado') && proj.resolutionComments && (
-                      <div className="mt-5 bg-slate-50 border border-slate-100 rounded-2xl p-5 text-sm ring-1 ring-slate-200/50">
-                        <h5 className="font-black text-slate-800 mb-2 flex items-center gap-2">
-                          <CheckSquare size={16} className="text-emerald-600" />
-                          Respuesta de Evaluación
-                        </h5>
-                        <p className="text-slate-600 italic">"{proj.resolutionComments}"</p>
-                      </div>
-                    )}
                   </div>
-
-                  <div className="flex flex-row md:flex-col lg:flex-row gap-2 flex-shrink-0">
-                    <button 
-                      className="flex-1 btn bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2"
-                      onClick={() => generatePDF(proj)}
-                    >
-                      <Download size={16} /> <span className="hidden sm:inline">PDF</span>
-                    </button>
-                    
-                    {proj.status === 'borrador' && (
-                      <>
-                        <button 
-                          className="flex-1 btn btn-primary px-5 py-2.5 rounded-xl font-black text-xs shadow-lg hover:shadow-emerald-200 shadow-emerald-500/10 flex items-center justify-center gap-2"
-                          onClick={() => handleEditDraft(proj)}
-                        >
-                          <ArrowRight size={16} /> Editar
-                        </button>
-                        <button 
-                          className="btn bg-red-50 text-red-500 hover:bg-red-100 p-2.5 rounded-xl transition-all border border-red-100"
-                          title="Eliminar Borrador"
-                          onClick={() => handleDeleteProject(proj._id)}
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      )}
+                );
+              })
+            )}
+          </div>
+        )}
       </div>
 
       {/* Application Wizard Modal (Estilo Minciencias Sidebar) */}
@@ -1019,44 +1019,42 @@ export const RadicacionDocente = () => {
               </div>
             </div>
 
-            <div className="wizard-body">
+            <div className="wizard-body md:flex-row flex-col">
               {/* Sidebar (Desktop) */}
-              <div className="wizard-sidebar md:flex hidden">
-                <div className="p-4 font-semibold text-secondary uppercase text-xs tracking-wider" style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: '#fdfdfd' }}>
-                  <nav className="wizard-nav">
-                    <button onClick={() => navigateToStep('general')} className={`wizard-nav-item ${formStep === 'general' ? 'active' : ''}`}>
-                      Generalidades
-                    </button>
-                    <button
-                      onClick={() => navigateToStep('personal')}
-                      disabled={!isGeneralComplete()}
-                      className={`wizard-nav-item ${formStep === 'personal' ? 'active' : ''} ${!isGeneralComplete() ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      Personal y Grupos
-                    </button>
-                    <button
-                      onClick={() => navigateToStep('formulario')}
-                      disabled={!isGeneralComplete()}
-                      className={`wizard-nav-item ${formStep === 'formulario' ? 'active' : ''} ${!isGeneralComplete() ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      Formulario Específico
-                    </button>
-                    <button
-                      onClick={() => navigateToStep('cronograma')}
-                      disabled={!isGeneralComplete()}
-                      className={`wizard-nav-item ${formStep === 'cronograma' ? 'active' : ''} ${!isGeneralComplete() ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      Cronograma
-                    </button>
-                    <button
-                      onClick={() => navigateToStep('validar')}
-                      disabled={!isGeneralComplete()}
-                      className={`wizard-nav-item validar ${formStep === 'validar' ? 'active' : ''} ${!isGeneralComplete() ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      <CheckSquare size={16} className="inline mr-2" style={{ verticalAlign: '-3px' }} /> Validar y Enviar
-                    </button>
-                  </nav>
-                </div>
+              <div className="wizard-sidebar md:flex hidden flex-col">
+                <nav className="wizard-nav py-4">
+                  <button onClick={() => navigateToStep('general')} className={`wizard-nav-item w-full text-left ${formStep === 'general' ? 'active' : ''}`}>
+                    Generalidades
+                  </button>
+                  <button
+                    onClick={() => navigateToStep('personal')}
+                    disabled={!isGeneralComplete()}
+                    className={`wizard-nav-item w-full text-left ${formStep === 'personal' ? 'active' : ''} ${!isGeneralComplete() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    Personal y Grupos
+                  </button>
+                  <button
+                    onClick={() => navigateToStep('formulario')}
+                    disabled={!isGeneralComplete()}
+                    className={`wizard-nav-item w-full text-left ${formStep === 'formulario' ? 'active' : ''} ${!isGeneralComplete() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    Formulario Específico
+                  </button>
+                  <button
+                    onClick={() => navigateToStep('cronograma')}
+                    disabled={!isGeneralComplete()}
+                    className={`wizard-nav-item w-full text-left ${formStep === 'cronograma' ? 'active' : ''} ${!isGeneralComplete() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    Cronograma
+                  </button>
+                  <button
+                    onClick={() => navigateToStep('validar')}
+                    disabled={!isGeneralComplete()}
+                    className={`wizard-nav-item validar w-full text-left ${formStep === 'validar' ? 'active' : ''} ${!isGeneralComplete() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <CheckSquare size={16} className="inline mr-2" style={{ verticalAlign: '-3px' }} /> Validar y Enviar
+                  </button>
+                </nav>
               </div>
 
               {/* Mobile navigation (Hidden on Desktop) */}
@@ -1402,7 +1400,7 @@ export const RadicacionDocente = () => {
                                                           return;
                                                         }
                                                       }
-                                                      
+
                                                       if (isObjTree) {
                                                         if (newType === 'OBJETIVO_GENERAL' && count >= 1 && row.type !== 'OBJETIVO_GENERAL') {
                                                           alert('Solo se permite 1 Objetivo General.');
@@ -1415,21 +1413,21 @@ export const RadicacionDocente = () => {
                                                     }}
                                                   >
                                                     {(field.label.toLowerCase().includes('objetivo') && field.type === 'table') ? (
-                                                        <>
-                                                            <option value="OBJETIVO_GENERAL">Objetivo General</option>
-                                                            <option value="OBJETIVO_ESPECIFICO">Objetivo Específico</option>
-                                                            <option value="FIN_DIRECTO">Fin Directo</option>
-                                                            <option value="FIN_INDIRECTO">Fin Indirecto</option>
-                                                            <option value="MEDIO_INDIRECTO">Medio Indirecto</option>
-                                                        </>
+                                                      <>
+                                                        <option value="OBJETIVO_GENERAL">Objetivo General</option>
+                                                        <option value="OBJETIVO_ESPECIFICO">Objetivo Específico</option>
+                                                        <option value="FIN_DIRECTO">Fin Directo</option>
+                                                        <option value="FIN_INDIRECTO">Fin Indirecto</option>
+                                                        <option value="MEDIO_INDIRECTO">Medio Indirecto</option>
+                                                      </>
                                                     ) : (
-                                                        <>
-                                                            <option value="PROBLEMA">Problema Central</option>
-                                                            <option value="CAUSA_DIRECTA">Causa Directa</option>
-                                                            <option value="CAUSA_INDIRECTA">Causa Indirecta</option>
-                                                            <option value="EFECTO_DIRECTO">Efecto Directo</option>
-                                                            <option value="EFECTO_INDIRECTO">Efecto Indirecto</option>
-                                                        </>
+                                                      <>
+                                                        <option value="PROBLEMA">Problema Central</option>
+                                                        <option value="CAUSA_DIRECTA">Causa Directa</option>
+                                                        <option value="CAUSA_INDIRECTA">Causa Indirecta</option>
+                                                        <option value="EFECTO_DIRECTO">Efecto Directo</option>
+                                                        <option value="EFECTO_INDIRECTO">Efecto Indirecto</option>
+                                                      </>
                                                     )}
                                                   </select>
                                                 </td>
@@ -1447,480 +1445,480 @@ export const RadicacionDocente = () => {
                                                 </td>
                                               </>
                                             )}
-                                    <td className="py-2 px-2 text-right">
-                                      <button
-                                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                                        onClick={() => {
-                                          const next = dynamicResponses[field.name].filter((_: any, i: number) => i !== idx);
-                                          handleDynamicChange(field.name, next);
-                                        }}
-                                      ><Trash2 size={16} /></button>
-                                    </td>
-                                  </tr>
+                                            <td className="py-2 px-2 text-right">
+                                              <button
+                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                                onClick={() => {
+                                                  const next = dynamicResponses[field.name].filter((_: any, i: number) => i !== idx);
+                                                  handleDynamicChange(field.name, next);
+                                                }}
+                                              ><Trash2 size={16} /></button>
+                                            </td>
+                                          </tr>
                                         ))}
-                                </tbody>
+                                      </tbody>
                                     </table>
                                   </div>
-                      <div className="mt-4 flex flex-wrap items-center gap-3">
-                        <button
-                          className="btn btn-primary py-1.5 px-4 text-[11px] font-bold flex items-center gap-2"
-                          onClick={() => {
-                            const current = Array.isArray(dynamicResponses[field.name]) ? dynamicResponses[field.name] : [];
-                            const isArbol = (field.name.toLowerCase().includes('arbol') || field.label.toLowerCase().includes('árbol')) && !field.label.toLowerCase().includes('objetivo');
-                            const isObjTree = field.label.toLowerCase().includes('objetivo') && field.type === 'table';
+                                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                                    <button
+                                      className="btn btn-primary py-1.5 px-4 text-[11px] font-bold flex items-center gap-2"
+                                      onClick={() => {
+                                        const current = Array.isArray(dynamicResponses[field.name]) ? dynamicResponses[field.name] : [];
+                                        const isArbol = (field.name.toLowerCase().includes('arbol') || field.label.toLowerCase().includes('árbol')) && !field.label.toLowerCase().includes('objetivo');
+                                        const isObjTree = field.label.toLowerCase().includes('objetivo') && field.type === 'table';
 
-                            if (isArbol && current.length >= 13) {
-                              alert("Se ha alcanzado el límite máximo permitido para el esquema del Árbol de Problemas.");
-                              return;
-                            }
+                                        if (isArbol && current.length >= 13) {
+                                          alert("Se ha alcanzado el límite máximo permitido para el esquema del Árbol de Problemas.");
+                                          return;
+                                        }
 
-                            const newRow: any = {};
-                            if (field.columns && field.columns.length > 0) {
-                              field.columns.forEach(col => newRow[col] = '');
-                            } else {
-                              const counts = current.reduce((acc: any, curr: any) => { acc[curr.type] = (acc[curr.type] || 0) + 1; return acc; }, {});
-                              let suggestedType = isObjTree ? 'OBJETIVO_GENERAL' : 'CAUSA_DIRECTA';
+                                        const newRow: any = {};
+                                        if (field.columns && field.columns.length > 0) {
+                                          field.columns.forEach(col => newRow[col] = '');
+                                        } else {
+                                          const counts = current.reduce((acc: any, curr: any) => { acc[curr.type] = (acc[curr.type] || 0) + 1; return acc; }, {});
+                                          let suggestedType = isObjTree ? 'OBJETIVO_GENERAL' : 'CAUSA_DIRECTA';
 
-                              if (isArbol) {
-                                if ((counts['CAUSA_DIRECTA'] || 0) >= 3) suggestedType = 'CAUSA_INDIRECTA';
-                                if ((counts['CAUSA_INDIRECTA'] || 0) >= 3) suggestedType = 'EFECTO_DIRECTO';
-                                if ((counts['EFECTO_DIRECTO'] || 0) >= 3) suggestedType = 'EFECTO_INDIRECTO';
-                                if ((counts['EFECTO_INDIRECTO'] || 0) >= 3 && !counts['PROBLEMA']) suggestedType = 'PROBLEMA';
-                              } else if (isObjTree) {
-                                if (!counts['OBJETIVO_GENERAL']) suggestedType = 'OBJETIVO_GENERAL';
-                                else if ((counts['OBJETIVO_ESPECIFICO'] || 0) < 3) suggestedType = 'OBJETIVO_ESPECIFICO';
-                                else if ((counts['FIN_DIRECTO'] || 0) < 3) suggestedType = 'FIN_DIRECTO';
-                                else if ((counts['FIN_INDIRECTO'] || 0) < 3) suggestedType = 'FIN_INDIRECTO';
-                                else suggestedType = 'MEDIO_INDIRECTO';
-                              }
+                                          if (isArbol) {
+                                            if ((counts['CAUSA_DIRECTA'] || 0) >= 3) suggestedType = 'CAUSA_INDIRECTA';
+                                            if ((counts['CAUSA_INDIRECTA'] || 0) >= 3) suggestedType = 'EFECTO_DIRECTO';
+                                            if ((counts['EFECTO_DIRECTO'] || 0) >= 3) suggestedType = 'EFECTO_INDIRECTO';
+                                            if ((counts['EFECTO_INDIRECTO'] || 0) >= 3 && !counts['PROBLEMA']) suggestedType = 'PROBLEMA';
+                                          } else if (isObjTree) {
+                                            if (!counts['OBJETIVO_GENERAL']) suggestedType = 'OBJETIVO_GENERAL';
+                                            else if ((counts['OBJETIVO_ESPECIFICO'] || 0) < 3) suggestedType = 'OBJETIVO_ESPECIFICO';
+                                            else if ((counts['FIN_DIRECTO'] || 0) < 3) suggestedType = 'FIN_DIRECTO';
+                                            else if ((counts['FIN_INDIRECTO'] || 0) < 3) suggestedType = 'FIN_INDIRECTO';
+                                            else suggestedType = 'MEDIO_INDIRECTO';
+                                          }
 
-                              if ((isArbol || isObjTree) && (counts[suggestedType] || 0) >= (suggestedType === 'PROBLEMA' || suggestedType === 'OBJETIVO_GENERAL' ? 1 : 3)) {
-                                alert(`Todas las categorías del esquema están completas según el límite permitido (Máximo 3 ítems por categoría '${suggestedType}').`);
-                                return;
-                              }
-                              if (isObjTree && suggestedType === 'OBJETIVO_GENERAL' && counts['OBJETIVO_GENERAL'] >= 1) {
-                                suggestedType = 'OBJETIVO_ESPECIFICO';
-                              }
+                                          if ((isArbol || isObjTree) && (counts[suggestedType] || 0) >= (suggestedType === 'PROBLEMA' || suggestedType === 'OBJETIVO_GENERAL' ? 1 : 3)) {
+                                            alert(`Todas las categorías del esquema están completas según el límite permitido (Máximo 3 ítems por categoría '${suggestedType}').`);
+                                            return;
+                                          }
+                                          if (isObjTree && suggestedType === 'OBJETIVO_GENERAL' && counts['OBJETIVO_GENERAL'] >= 1) {
+                                            suggestedType = 'OBJETIVO_ESPECIFICO';
+                                          }
 
-                              newRow.type = suggestedType;
-                              newRow.description = '';
-                            }
-                            handleDynamicChange(field.name, [...current, newRow]);
-                          }}
-                        >
-                          <Plus size={14} /> Adicionar Fila a la Tabla
-                        </button>
+                                          newRow.type = suggestedType;
+                                          newRow.description = '';
+                                        }
+                                        handleDynamicChange(field.name, [...current, newRow]);
+                                      }}
+                                    >
+                                      <Plus size={14} /> Adicionar Fila a la Tabla
+                                    </button>
 
-                        {(field.name.includes('arbol') || field.label.toLowerCase().includes('árbol')) && (
-                          <span className="text-[10px] text-gray-500 italic">
-                            * Formato oficial: Máx 1 Problema, 3 Causas Directas, 3 Indirectas, 3 Efectos Directos, 3 Indirectos.
-                          </span>
+                                    {(field.name.includes('arbol') || field.label.toLowerCase().includes('árbol')) && (
+                                      <span className="text-[10px] text-gray-500 italic">
+                                        * Formato oficial: Máx 1 Problema, 3 Causas Directas, 3 Indirectas, 3 Efectos Directos, 3 Indirectos.
+                                      </span>
+                                    )}
+                                    {field.options && field.options.length > 0 && (Array.isArray(dynamicResponses[field.name]) ? dynamicResponses[field.name].length : 0) === 0 && (
+                                      <button
+                                        className="btn btn-outline py-1.5 px-4 text-[11px] font-bold border-dashed flex items-center gap-2"
+                                        onClick={() => {
+                                          const firstCol = field.columns?.[0] || 'type';
+                                          const initialRows = field.options!.map(opt => {
+                                            const row: any = {};
+                                            if (field.columns && field.columns.length > 0) {
+                                              field.columns.forEach(col => row[col] = '');
+                                              row[firstCol] = opt;
+                                            } else {
+                                              row.type = opt;
+                                              row.description = '';
+                                            }
+                                            return row;
+                                          });
+                                          handleDynamicChange(field.name, initialRows);
+                                        }}
+                                      >
+                                        Cargar Estructura Sugerida
+                                      </button>
+                                    )}
+                                  </div>
+                                  <p className="text-[10px] text-gray-400 mt-3 italic">Esquema tabular para captura estructurada de información.</p>
+                                </div>
+                              ) : field.type === 'select' && field.options ? (
+                                <select
+                                  className="form-select w-full p-3 bg-gray-50 focus:bg-white transition-colors border-gray-200 focus:border-primary-500 rounded-lg text-sm"
+                                  value={dynamicResponses[field.name] || ''}
+                                  onChange={(e) => handleDynamicChange(field.name, e.target.value)}
+                                >
+                                  <option value="">{field.placeholder || "-- Seleccione una opción --"}</option>
+                                  {field.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                </select>
+                              ) : field.type === 'number' ? (
+                                <div className="relative">
+                                  <span className="absolute left-3 top-3.5 text-gray-500 font-medium">$</span>
+                                  <input
+                                    type="number"
+                                    className="form-input w-full p-3 pl-8 bg-gray-50 focus:bg-white transition-colors border-gray-200 focus:border-primary-500 rounded-lg text-sm"
+                                    value={dynamicResponses[field.name] || ''}
+                                    onChange={(e) => handleDynamicChange(field.name, Number(e.target.value))}
+                                    placeholder={field.placeholder || "0"}
+                                  />
+                                </div>
+                              ) : field.type === 'file' ? (
+                                <div className="border-2 border-dashed border-gray-200 p-6 text-center rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors group">
+                                  <input
+                                    type="file"
+                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary-600 file:text-white hover:file:bg-primary-700 cursor-pointer"
+                                    onChange={(e) => handleDynamicChange(field.name, e.target.files?.[0]?.name || 'documento.pdf')}
+                                  />
+                                  <p className="text-[10px] text-gray-400 mt-3 font-medium uppercase tracking-wider">Formatos permitidos: PDF, DOCX (Máximo 3MB).</p>
+                                </div>
+                              ) : (
+                                <input
+                                  type={field.type === 'date' ? 'date' : 'text'}
+                                  className="form-input w-full p-3 bg-gray-50 focus:bg-white transition-colors border-gray-200 focus:border-primary-500 rounded-lg text-sm"
+                                  value={dynamicResponses[field.name] || ''}
+                                  onChange={(e) => handleDynamicChange(field.name, e.target.value)}
+                                  placeholder={field.placeholder || "Escriba aquí..."}
+                                />
+                              )}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center text-gray-400 py-10 italic">
+                            No se han definido campos adicionales para esta convocatoria.
+                          </div>
                         )}
-                        {field.options && field.options.length > 0 && (Array.isArray(dynamicResponses[field.name]) ? dynamicResponses[field.name].length : 0) === 0 && (
-                          <button
-                            className="btn btn-outline py-1.5 px-4 text-[11px] font-bold border-dashed flex items-center gap-2"
-                            onClick={() => {
-                              const firstCol = field.columns?.[0] || 'type';
-                              const initialRows = field.options!.map(opt => {
-                                const row: any = {};
-                                if (field.columns && field.columns.length > 0) {
-                                  field.columns.forEach(col => row[col] = '');
-                                  row[firstCol] = opt;
-                                } else {
-                                  row.type = opt;
-                                  row.description = '';
-                                }
-                                return row;
-                              });
-                              handleDynamicChange(field.name, initialRows);
-                            }}
-                          >
-                            Cargar Estructura Sugerida
-                          </button>
+
+                        {selectedConvo.dynamicFields && selectedConvo.dynamicFields.length === 0 && (
+                          <div className="text-center text-gray-400 py-10 italic">
+                            Esta convocatoria no tiene campos adicionales requeridos.
+                          </div>
                         )}
                       </div>
-                      <p className="text-[10px] text-gray-400 mt-3 italic">Esquema tabular para captura estructurada de información.</p>
-                    </div>
-                  ) : field.type === 'select' && field.options ? (
-                  <select
-                    className="form-select w-full p-3 bg-gray-50 focus:bg-white transition-colors border-gray-200 focus:border-primary-500 rounded-lg text-sm"
-                    value={dynamicResponses[field.name] || ''}
-                    onChange={(e) => handleDynamicChange(field.name, e.target.value)}
-                  >
-                    <option value="">{field.placeholder || "-- Seleccione una opción --"}</option>
-                    {field.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                  </select>
-                  ) : field.type === 'number' ? (
-                  <div className="relative">
-                    <span className="absolute left-3 top-3.5 text-gray-500 font-medium">$</span>
-                    <input
-                      type="number"
-                      className="form-input w-full p-3 pl-8 bg-gray-50 focus:bg-white transition-colors border-gray-200 focus:border-primary-500 rounded-lg text-sm"
-                      value={dynamicResponses[field.name] || ''}
-                      onChange={(e) => handleDynamicChange(field.name, Number(e.target.value))}
-                      placeholder={field.placeholder || "0"}
-                    />
-                  </div>
-                  ) : field.type === 'file' ? (
-                  <div className="border-2 border-dashed border-gray-200 p-6 text-center rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors group">
-                    <input
-                      type="file"
-                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-6 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary-600 file:text-white hover:file:bg-primary-700 cursor-pointer"
-                      onChange={(e) => handleDynamicChange(field.name, e.target.files?.[0]?.name || 'documento.pdf')}
-                    />
-                    <p className="text-[10px] text-gray-400 mt-3 font-medium uppercase tracking-wider">Formatos permitidos: PDF, DOCX (Máximo 3MB).</p>
-                  </div>
-                  ) : (
-                  <input
-                    type={field.type === 'date' ? 'date' : 'text'}
-                    className="form-input w-full p-3 bg-gray-50 focus:bg-white transition-colors border-gray-200 focus:border-primary-500 rounded-lg text-sm"
-                    value={dynamicResponses[field.name] || ''}
-                    onChange={(e) => handleDynamicChange(field.name, e.target.value)}
-                    placeholder={field.placeholder || "Escriba aquí..."}
-                  />
-                              )}
-                </div>
-                ))
-                ) : (
-                <div className="text-center text-gray-400 py-10 italic">
-                  No se han definido campos adicionales para esta convocatoria.
-                </div>
+                      <div className="flex flex-col gap-3 pt-4 border-t">
+                        {isDirty && (
+                          <p className="text-[11px] font-bold text-orange-600 bg-orange-50 p-2 rounded-lg flex items-center gap-2">
+                            ⚠️ Tienes cambios sin guardar en el Formulario. Por favor Guarde antes de continuar.
+                          </p>
                         )}
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-4 border-t">
+                          <div className="flex gap-2">
+                            <button className="btn btn-outline" onClick={() => navigateToStep('personal')}>Anterior</button>
+                            <button className="btn btn-outline border-primary-300 text-primary-700 hover:bg-primary-50" onClick={handlePreviewPDF}>
+                              <Download size={18} className="mr-2" /> Vista Previa PDF
+                            </button>
+                          </div>
+                          <div className="flex gap-2">
+                            <button className="btn btn-outline" onClick={() => handleSaveData('borrador')} disabled={submitting}>
+                              <Save size={18} className="mr-2" /> Guardar Borrador
+                            </button>
+                            <button className={`btn shadow-md ${isDirty ? 'bg-gray-200 text-gray-500 cursor-not-allowed border-gray-200' : 'btn-primary'}`}
+                              onClick={() => !isDirty && (validateForm() && navigateToStep('cronograma'))}
+                              disabled={isDirty}>
+                              Pasar a Cronograma <ArrowRight size={18} className="ml-2" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
-                {selectedConvo.dynamicFields && selectedConvo.dynamicFields.length === 0 && (
-                  <div className="text-center text-gray-400 py-10 italic">
-                    Esta convocatoria no tiene campos adicionales requeridos.
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col gap-3 pt-4 border-t">
-                {isDirty && (
-                  <p className="text-[11px] font-bold text-orange-600 bg-orange-50 p-2 rounded-lg flex items-center gap-2">
-                    ⚠️ Tienes cambios sin guardar en el Formulario. Por favor Guarde antes de continuar.
-                  </p>
-                )}
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-4 border-t">
-                  <div className="flex gap-2">
-                    <button className="btn btn-outline" onClick={() => navigateToStep('personal')}>Anterior</button>
-                    <button className="btn btn-outline border-primary-300 text-primary-700 hover:bg-primary-50" onClick={handlePreviewPDF}>
-                      <Download size={18} className="mr-2" /> Vista Previa PDF
-                    </button>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="btn btn-outline" onClick={() => handleSaveData('borrador')} disabled={submitting}>
-                      <Save size={18} className="mr-2" /> Guardar Borrador
-                    </button>
-                    <button className={`btn shadow-md ${isDirty ? 'bg-gray-200 text-gray-500 cursor-not-allowed border-gray-200' : 'btn-primary'}`}
-                      onClick={() => !isDirty && (validateForm() && navigateToStep('cronograma'))}
-                      disabled={isDirty}>
-                      Pasar a Cronograma <ArrowRight size={18} className="ml-2" />
-                    </button>
-                  </div>
+                  {/* Step: Cronograma */}
+                  {formStep === 'cronograma' && (
+                    <div className="animate-fade-in space-y-6">
+                      <div className="flex justify-between items-center bg-primary-50 p-6 rounded-xl border border-primary-100 mb-6">
+                        <div>
+                          <h3 className="wizard-title mb-1">Cronograma de Actividades</h3>
+                          <p className="text-secondary text-xs">Vincule cada actividad a uno de los objetivos específicos registrados en el formulario.</p>
+                        </div>
+                        <Activity className="text-primary-600 opacity-20" size={56} />
+                      </div>
+
+                      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                        <table className="w-full text-left">
+                          <thead className="bg-gray-50 border-b border-gray-100">
+                            <tr>
+                              <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase">Objetivo Específico Relacionado</th>
+                              <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase">Actividad / Tarea a Realizar</th>
+                              <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase text-center w-28">Periodo (Meses)</th>
+                              <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase text-right w-20"></th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100">
+                            {(Array.isArray(dynamicResponses['cronograma']) ? dynamicResponses['cronograma'] : []).map((act: any, idx: number) => (
+                              <tr key={idx} className="group hover:bg-gray-50 transition-colors">
+                                <td className="py-3 px-4 align-top w-1/3">
+                                  <select
+                                    className="form-select w-full text-xs p-2 border-gray-200"
+                                    value={act.objective || ''}
+                                    onChange={e => {
+                                      const next = [...(dynamicResponses['cronograma'] || [])];
+                                      next[idx].objective = e.target.value;
+                                      handleDynamicChange('cronograma', next);
+                                    }}
+                                  >
+                                    <option value="">-- Seleccione Objetivo --</option>
+                                    {(() => {
+                                      const objTreeField = selectedConvo?.dynamicFields?.find(f => f.label.toLowerCase().includes('objetivo') && f.type === 'table');
+                                      const treeRows = objTreeField ? (dynamicResponses[objTreeField.name] || []) : [];
+                                      return treeRows.filter((r: any) => r.type === 'OBJETIVO_ESPECIFICO').map((r: any, i: number) => (
+                                        <option key={i} value={r.description}>{r.description?.substring(0, 60)}...</option>
+                                      ));
+                                    })()}
+                                  </select>
+                                </td>
+                                <td className="py-3 px-4 align-top">
+                                  <textarea
+                                    className="form-textarea w-full text-xs p-2 h-20 border-gray-200 focus:bg-white"
+                                    value={act.description || ''}
+                                    onChange={e => {
+                                      const next = [...(dynamicResponses['cronograma'] || [])];
+                                      next[idx].description = e.target.value;
+                                      handleDynamicChange('cronograma', next);
+                                    }}
+                                    placeholder="Describa el producto o actividad..."
+                                  />
+                                </td>
+                                <td className="py-3 px-4 bg-gray-50/30">
+                                  <div className="flex flex-col gap-2">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[10px] font-bold text-gray-400 w-8">INI:</span>
+                                      <input
+                                        type="number"
+                                        className="form-input w-16 text-xs p-1 text-center"
+                                        value={act.startMonth || ''}
+                                        onChange={e => {
+                                          const next = [...(dynamicResponses['cronograma'] || [])];
+                                          next[idx].startMonth = Number(e.target.value);
+                                          handleDynamicChange('cronograma', next);
+                                        }}
+                                        min="1"
+                                        max={executionMonths}
+                                      />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[10px] font-bold text-gray-400 w-8">FIN:</span>
+                                      <input
+                                        type="number"
+                                        className="form-input w-16 text-xs p-1 text-center"
+                                        value={act.endMonth || ''}
+                                        onChange={e => {
+                                          const next = [...(dynamicResponses['cronograma'] || [])];
+                                          next[idx].endMonth = Number(e.target.value);
+                                          handleDynamicChange('cronograma', next);
+                                        }}
+                                        min="1"
+                                        max={executionMonths}
+                                      />
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="py-3 px-4 text-right align-middle">
+                                  <button
+                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                    title="Eliminar actividad"
+                                    onClick={() => {
+                                      const next = dynamicResponses['cronograma'].filter((_: any, i: number) => i !== idx);
+                                      handleDynamicChange('cronograma', next);
+                                    }}
+                                  ><Trash2 size={18} /></button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+
+                        {(!dynamicResponses['cronograma'] || dynamicResponses['cronograma'].length === 0) && (
+                          <div className="p-12 text-center">
+                            <div className="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                              <Activity className="text-gray-300" size={32} />
+                            </div>
+                            <p className="text-gray-400 text-sm italic">No hay actividades registradas en el cronograma.</p>
+                            <button
+                              className="mt-4 text-primary-600 font-bold text-xs uppercase tracking-wider hover:underline"
+                              onClick={() => {
+                                const current = Array.isArray(dynamicResponses['cronograma']) ? dynamicResponses['cronograma'] : [];
+                                handleDynamicChange('cronograma', [...current, { objective: '', description: '', startMonth: 1, endMonth: 1 }]);
+                              }}
+                            >+ Adicionar Primera Actividad</button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap items-center justify-between gap-4 mt-4">
+                        <button
+                          className="btn btn-primary py-2 px-8 flex items-center gap-2 shadow-lg"
+                          onClick={() => {
+                            const current = Array.isArray(dynamicResponses['cronograma']) ? dynamicResponses['cronograma'] : [];
+                            handleDynamicChange('cronograma', [...current, { objective: '', description: '', startMonth: 1, endMonth: 1 }]);
+                          }}
+                        >
+                          <Plus size={18} /> Nueva Actividad
+                        </button>
+
+                        <div className="flex items-center gap-2 text-[11px] font-medium text-amber-700 bg-amber-50 px-4 py-2 rounded-lg border border-amber-100">
+                          <Calendar size={14} />
+                          <span>Plazo máximo de ejecución: <strong>{executionMonths} meses</strong> (Mes 1 al Mes {executionMonths})</span>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-8 border-t mt-12">
+                        <button className="btn btn-outline" onClick={() => navigateToStep('formulario')}>Retroceder a Formulario</button>
+                        <div className="flex gap-3">
+                          <button className="btn btn-outline bg-white" onClick={() => handleSaveData('borrador')} disabled={submitting}>
+                            <Save size={18} className="mr-2" /> Guardar Borrador
+                          </button>
+                          <button className={`btn ${isDirty ? 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed' : 'btn-primary shadow-xl hover:scale-105 transition-all'}`}
+                            onClick={() => !isDirty && (validateForm() && navigateToStep('validar'))}
+                            disabled={isDirty}>
+                            Revisar y Validar <ArrowRight size={18} className="ml-2" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step: Validar y Enviar */}
+                  {formStep === 'validar' && (
+                    <div className="animate-fade-in">
+                      <h3 className="wizard-title">Validación del Proyecto</h3>
+
+                      {validationErrors.length > 0 ? (
+                        <div className="bg-red-50 border border-red-200 p-6 rounded-lg mb-8" style={{ backgroundColor: '#fef2f2', borderColor: '#f87171' }}>
+                          <h4 className="font-semibold mb-4 text-red-500" style={{ fontSize: '1.15rem' }}>El proyecto no puede ser radicado. Por favor corrija los siguientes errores:</h4>
+                          <ul className="list-disc pl-5 space-y-1 text-red-700 text-sm">
+                            {validationErrors.map((err, i) => <li key={i}>{err}</li>)}
+                          </ul>
+                        </div>
+                      ) : (
+                        <div className="bg-green-50 border border-green-200 p-6 rounded-lg mb-8 flex items-start gap-4" style={{ backgroundColor: '#ecfdf5', borderColor: '#6ee7b7' }}>
+                          <CheckCircle style={{ color: "var(--success)" }} size={28} />
+                          <div>
+                            <h4 className="font-semibold mb-1" style={{ color: "var(--success)", fontSize: '1.15rem' }}>El proyecto ha sido validado sin errores</h4>
+                            <p className="text-secondary text-sm">Una vez haya verificado la información, acepte los términos y envíelo para que quede radicado en la División de Investigación.</p>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className={`p-6 border rounded-lg text-sm mb-8 space-y-4 shadow-sm transition-all ${termsAccepted ? 'bg-success-50 border-success-200' : 'bg-gray-50 border-gray-200'}`}>
+                        <label className="flex items-start gap-3 cursor-pointer group">
+                          <input
+                            type="checkbox"
+                            className="w-5 h-5 mt-0.5 text-primary-600 rounded focus:ring-primary-500 cursor-pointer"
+                            style={{ accentColor: "var(--primary-600)" }}
+                            checked={termsAccepted}
+                            onChange={(e) => setTermsAccepted(e.target.checked)}
+                          />
+                          <div className="flex flex-col">
+                            <span className={`font-medium transition-colors ${termsAccepted ? 'text-success-800' : 'text-gray-700'}`} style={{ fontSize: '1rem' }}>
+                              Acepto los <a href="#" className="underline font-bold" onClick={(e) => e.preventDefault()}>términos y condiciones</a> de la convocatoria.
+                            </span>
+                            <p className="text-secondary text-[13px] mt-1">Confirmo que la información suministrada es verídica y que el proyecto se ajusta a los requerimientos de la División de Investigación de la Universidad de Sucre.</p>
+                          </div>
+                        </label>
+                      </div>
+
+                      <div className="flex justify-center gap-4">
+                        <button className="btn btn-outline px-6" onClick={() => navigateToStep('general')}>Retroceder y Editar</button>
+                        <button
+                          className={`btn px-8 shadow-lg transition-all duration-300 ${validationErrors.length > 0 || !termsAccepted ? 'bg-gray-300 text-gray-500 cursor-not-allowed scale-95 opacity-70' : 'btn-primary hover:scale-105'}`}
+                          onClick={() => handleSaveData('radicado')}
+                          disabled={validationErrors.length > 0 || !termsAccepted || submitting}
+                        >
+                          <Send size={18} className="mr-2" />
+                          {submitting ? 'Radicando en sistema...' : 'Enviar y Radicar Proyecto Permanentemente'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Modal: Adicionar/Editar Persona */}
+                  {showMemberModal && (
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[200]">
+                      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in shadow-xl" style={{ boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
+                        <div className="p-5 border-b flex justify-between items-center bg-gray-50">
+                          <h4 className="font-bold text-gray-800">{currentMember.index !== undefined ? 'Editar Personal' : 'Adicionar Personal al Proyecto'}</h4>
+                          <button onClick={() => setShowMemberModal(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
+                        </div>
+                        <div className="p-6 space-y-4">
+                          <div className="form-group mb-0">
+                            <label className="text-xs font-bold text-gray-500 uppercase">¿Está registrado en la plataforma?</label>
+                            <select className="form-select w-full p-2 border rounded" value={currentMember.user || ''} onChange={e => {
+                              const u = availableUsers.find(x => x._id === e.target.value);
+                              setCurrentMember({
+                                ...currentMember,
+                                user: e.target.value,
+                                name: u ? u.name : '',
+                                identificationNumber: u ? u.identificationNumber || '' : ''
+                              });
+                            }}>
+                              <option value="">-- No, es personal externo --</option>
+                              {availableUsers.map(u => <option key={u._id} value={u._id}>{u.name} ({u.role})</option>)}
+                            </select>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="form-group mb-0">
+                              <label className="text-xs font-bold text-gray-500 uppercase">Nombre Completo</label>
+                              <input type="text" className="form-input w-full p-2 border rounded" value={currentMember.name} onChange={e => setCurrentMember({ ...currentMember, name: e.target.value })} placeholder="Ej. Juan Alberto Perez Sarmiento" disabled={!!currentMember.user} />
+                            </div>
+                            <div className="form-group mb-0">
+                              <label className="text-xs font-bold text-gray-500 uppercase">Número Identificación</label>
+                              <input type="text" className="form-input w-full p-2 border rounded" value={currentMember.identificationNumber} onChange={e => setCurrentMember({ ...currentMember, identificationNumber: e.target.value })} placeholder="Ej. 1102..." disabled={!!currentMember.user} />
+                            </div>
+                          </div>
+                          <div className="form-group mb-0">
+                            <label className="text-xs font-bold text-gray-500 uppercase">Perfil / Rol en Proyecto</label>
+                            <select className="form-select w-full p-2 border rounded" value={currentMember.role} onChange={e => setCurrentMember({ ...currentMember, role: e.target.value })}>
+                              <option>Investigador Principal</option>
+                              <option>Coinvestigador</option>
+                              <option>Estudiante de Pregrado</option>
+                              <option>Joven Investigador</option>
+                              <option>Estudiante de Maestría</option>
+                              <option>Estudiante de Especialización</option>
+                              <option>Estudiante de Doctorado</option>
+                              <option>Posdoctor</option>
+                              <option>Técnico / Auxiliar</option>
+                              <option>Otro</option>
+                            </select>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="form-group mb-0">
+                              <label className="text-xs font-bold text-gray-500 uppercase">Horas x Mes</label>
+                              <input type="number" className="form-input w-full p-2 border rounded" value={currentMember.hoursPerMonth} onChange={e => setCurrentMember({ ...currentMember, hoursPerMonth: Number(e.target.value) })} />
+                            </div>
+                            <div className="form-group mb-0">
+                              <label className="text-xs font-bold text-gray-500 uppercase">Valor Hora ($)</label>
+                              <input type="number" className="form-input w-full p-2 border rounded" value={currentMember.hourlyRate} onChange={e => setCurrentMember({ ...currentMember, hourlyRate: Number(e.target.value) })} />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="form-group mb-0">
+                              <label className="text-xs font-bold text-gray-500 uppercase">Número de Meses</label>
+                              <input type="number" className="form-input w-full p-2 border rounded" value={currentMember.months} onChange={e => setCurrentMember({ ...currentMember, months: Number(e.target.value) })} />
+                            </div>
+                            <div className="form-group mb-0 pt-6">
+                              <label className="flex items-center gap-2 cursor-pointer font-medium text-sm">
+                                <input type="checkbox" className="w-4 h-4" checked={currentMember.isContrapartida} onChange={e => setCurrentMember({ ...currentMember, isContrapartida: e.target.checked })} />
+                                Es Contrapartida
+                              </label>
+                            </div>
+                          </div>
+
+                          <div className="bg-primary-50 p-4 rounded-lg flex justify-between items-center border border-primary-100">
+                            <span className="text-xs text-primary-700 font-bold uppercase">Costo Total Calculado:</span>
+                            <span className="text-xl font-bold text-primary-800">${(currentMember.hoursPerMonth * currentMember.hourlyRate * currentMember.months).toLocaleString()}</span>
+                          </div>
+                        </div>
+                        <div className="p-5 border-t bg-gray-50 flex justify-end gap-3">
+                          <button className="btn btn-outline" onClick={() => setShowMemberModal(false)}>Cancelar</button>
+                          <button className="btn btn-primary" onClick={addOrUpdateMember}>Guardar Personal</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-                  )}
-
-            {/* Step: Cronograma */}
-            {formStep === 'cronograma' && (
-              <div className="animate-fade-in space-y-6">
-                <div className="flex justify-between items-center bg-primary-50 p-6 rounded-xl border border-primary-100 mb-6">
-                  <div>
-                    <h3 className="wizard-title mb-1">Cronograma de Actividades</h3>
-                    <p className="text-secondary text-xs">Vincule cada actividad a uno de los objetivos específicos registrados en el formulario.</p>
-                  </div>
-                  <Activity className="text-primary-600 opacity-20" size={56} />
-                </div>
-
-                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                  <table className="w-full text-left">
-                    <thead className="bg-gray-50 border-b border-gray-100">
-                      <tr>
-                        <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase">Objetivo Específico Relacionado</th>
-                        <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase">Actividad / Tarea a Realizar</th>
-                        <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase text-center w-28">Periodo (Meses)</th>
-                        <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase text-right w-20"></th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {(Array.isArray(dynamicResponses['cronograma']) ? dynamicResponses['cronograma'] : []).map((act: any, idx: number) => (
-                        <tr key={idx} className="group hover:bg-gray-50 transition-colors">
-                          <td className="py-3 px-4 align-top w-1/3">
-                            <select 
-                              className="form-select w-full text-xs p-2 border-gray-200"
-                              value={act.objective || ''}
-                              onChange={e => {
-                                const next = [...(dynamicResponses['cronograma'] || [])];
-                                next[idx].objective = e.target.value;
-                                handleDynamicChange('cronograma', next);
-                              }}
-                            >
-                              <option value="">-- Seleccione Objetivo --</option>
-                              {(() => {
-                                 const objTreeField = selectedConvo?.dynamicFields?.find(f => f.label.toLowerCase().includes('objetivo') && f.type === 'table');
-                                 const treeRows = objTreeField ? (dynamicResponses[objTreeField.name] || []) : [];
-                                 return treeRows.filter((r: any) => r.type === 'OBJETIVO_ESPECIFICO').map((r: any, i: number) => (
-                                   <option key={i} value={r.description}>{r.description?.substring(0, 60)}...</option>
-                                 ));
-                              })()}
-                            </select>
-                          </td>
-                          <td className="py-3 px-4 align-top">
-                            <textarea 
-                              className="form-textarea w-full text-xs p-2 h-20 border-gray-200 focus:bg-white"
-                              value={act.description || ''}
-                              onChange={e => {
-                                const next = [...(dynamicResponses['cronograma'] || [])];
-                                next[idx].description = e.target.value;
-                                handleDynamicChange('cronograma', next);
-                              }}
-                              placeholder="Describa el producto o actividad..."
-                            />
-                          </td>
-                          <td className="py-3 px-4 bg-gray-50/30">
-                            <div className="flex flex-col gap-2">
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-gray-400 w-8">INI:</span>
-                                <input 
-                                  type="number" 
-                                  className="form-input w-16 text-xs p-1 text-center"
-                                  value={act.startMonth || ''}
-                                  onChange={e => {
-                                    const next = [...(dynamicResponses['cronograma'] || [])];
-                                    next[idx].startMonth = Number(e.target.value);
-                                    handleDynamicChange('cronograma', next);
-                                  }}
-                                  min="1"
-                                  max={executionMonths}
-                                />
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-gray-400 w-8">FIN:</span>
-                                <input 
-                                  type="number" 
-                                  className="form-input w-16 text-xs p-1 text-center"
-                                  value={act.endMonth || ''}
-                                  onChange={e => {
-                                    const next = [...(dynamicResponses['cronograma'] || [])];
-                                    next[idx].endMonth = Number(e.target.value);
-                                    handleDynamicChange('cronograma', next);
-                                  }}
-                                  min="1"
-                                  max={executionMonths}
-                                />
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-3 px-4 text-right align-middle">
-                            <button 
-                              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                              title="Eliminar actividad"
-                              onClick={() => {
-                                const next = dynamicResponses['cronograma'].filter((_: any, i: number) => i !== idx);
-                                handleDynamicChange('cronograma', next);
-                              }}
-                            ><Trash2 size={18} /></button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  
-                  {(!dynamicResponses['cronograma'] || dynamicResponses['cronograma'].length === 0) && (
-                    <div className="p-12 text-center">
-                      <div className="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Activity className="text-gray-300" size={32} />
-                      </div>
-                      <p className="text-gray-400 text-sm italic">No hay actividades registradas en el cronograma.</p>
-                      <button 
-                        className="mt-4 text-primary-600 font-bold text-xs uppercase tracking-wider hover:underline"
-                        onClick={() => {
-                          const current = Array.isArray(dynamicResponses['cronograma']) ? dynamicResponses['cronograma'] : [];
-                          handleDynamicChange('cronograma', [...current, { objective: '', description: '', startMonth: 1, endMonth: 1 }]);
-                        }}
-                      >+ Adicionar Primera Actividad</button>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex flex-wrap items-center justify-between gap-4 mt-4">
-                  <button 
-                    className="btn btn-primary py-2 px-8 flex items-center gap-2 shadow-lg"
-                    onClick={() => {
-                      const current = Array.isArray(dynamicResponses['cronograma']) ? dynamicResponses['cronograma'] : [];
-                      handleDynamicChange('cronograma', [...current, { objective: '', description: '', startMonth: 1, endMonth: 1 }]);
-                    }}
-                  >
-                    <Plus size={18} /> Nueva Actividad
-                  </button>
-
-                  <div className="flex items-center gap-2 text-[11px] font-medium text-amber-700 bg-amber-50 px-4 py-2 rounded-lg border border-amber-100">
-                    <Calendar size={14} />
-                    <span>Plazo máximo de ejecución: <strong>{executionMonths} meses</strong> (Mes 1 al Mes {executionMonths})</span>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center pt-8 border-t mt-12">
-                  <button className="btn btn-outline" onClick={() => navigateToStep('formulario')}>Retroceder a Formulario</button>
-                  <div className="flex gap-3">
-                     <button className="btn btn-outline bg-white" onClick={() => handleSaveData('borrador')} disabled={submitting}>
-                        <Save size={18} className="mr-2" /> Guardar Borrador
-                     </button>
-                     <button className={`btn ${isDirty ? 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed' : 'btn-primary shadow-xl hover:scale-105 transition-all'}`}
-                         onClick={() => !isDirty && (validateForm() && navigateToStep('validar'))}
-                         disabled={isDirty}>
-                        Revisar y Validar <ArrowRight size={18} className="ml-2" />
-                     </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step: Validar y Enviar */}
-            {formStep === 'validar' && (
-              <div className="animate-fade-in">
-                <h3 className="wizard-title">Validación del Proyecto</h3>
-
-                {validationErrors.length > 0 ? (
-                  <div className="bg-red-50 border border-red-200 p-6 rounded-lg mb-8" style={{ backgroundColor: '#fef2f2', borderColor: '#f87171' }}>
-                    <h4 className="font-semibold mb-4 text-red-500" style={{ fontSize: '1.15rem' }}>El proyecto no puede ser radicado. Por favor corrija los siguientes errores:</h4>
-                    <ul className="list-disc pl-5 space-y-1 text-red-700 text-sm">
-                      {validationErrors.map((err, i) => <li key={i}>{err}</li>)}
-                    </ul>
-                  </div>
-                ) : (
-                  <div className="bg-green-50 border border-green-200 p-6 rounded-lg mb-8 flex items-start gap-4" style={{ backgroundColor: '#ecfdf5', borderColor: '#6ee7b7' }}>
-                    <CheckCircle style={{ color: "var(--success)" }} size={28} />
-                    <div>
-                      <h4 className="font-semibold mb-1" style={{ color: "var(--success)", fontSize: '1.15rem' }}>El proyecto ha sido validado sin errores</h4>
-                      <p className="text-secondary text-sm">Una vez haya verificado la información, acepte los términos y envíelo para que quede radicado en la División de Investigación.</p>
-                    </div>
-                  </div>
-                )}
-
-                <div className={`p-6 border rounded-lg text-sm mb-8 space-y-4 shadow-sm transition-all ${termsAccepted ? 'bg-success-50 border-success-200' : 'bg-gray-50 border-gray-200'}`}>
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      className="w-5 h-5 mt-0.5 text-primary-600 rounded focus:ring-primary-500 cursor-pointer"
-                      style={{ accentColor: "var(--primary-600)" }}
-                      checked={termsAccepted}
-                      onChange={(e) => setTermsAccepted(e.target.checked)}
-                    />
-                    <div className="flex flex-col">
-                      <span className={`font-medium transition-colors ${termsAccepted ? 'text-success-800' : 'text-gray-700'}`} style={{ fontSize: '1rem' }}>
-                        Acepto los <a href="#" className="underline font-bold" onClick={(e) => e.preventDefault()}>términos y condiciones</a> de la convocatoria.
-                      </span>
-                      <p className="text-secondary text-[13px] mt-1">Confirmo que la información suministrada es verídica y que el proyecto se ajusta a los requerimientos de la División de Investigación de la Universidad de Sucre.</p>
-                    </div>
-                  </label>
-                </div>
-
-                <div className="flex justify-center gap-4">
-                  <button className="btn btn-outline px-6" onClick={() => navigateToStep('general')}>Retroceder y Editar</button>
-                  <button
-                    className={`btn px-8 shadow-lg transition-all duration-300 ${validationErrors.length > 0 || !termsAccepted ? 'bg-gray-300 text-gray-500 cursor-not-allowed scale-95 opacity-70' : 'btn-primary hover:scale-105'}`}
-                    onClick={() => handleSaveData('radicado')}
-                    disabled={validationErrors.length > 0 || !termsAccepted || submitting}
-                  >
-                    <Send size={18} className="mr-2" />
-                    {submitting ? 'Radicando en sistema...' : 'Enviar y Radicar Proyecto Permanentemente'}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Modal: Adicionar/Editar Persona */}
-            {showMemberModal && (
-              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[200]">
-                <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in shadow-xl" style={{ boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-                  <div className="p-5 border-b flex justify-between items-center bg-gray-50">
-                    <h4 className="font-bold text-gray-800">{currentMember.index !== undefined ? 'Editar Personal' : 'Adicionar Personal al Proyecto'}</h4>
-                    <button onClick={() => setShowMemberModal(false)} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    <div className="form-group mb-0">
-                      <label className="text-xs font-bold text-gray-500 uppercase">¿Está registrado en la plataforma?</label>
-                      <select className="form-select w-full p-2 border rounded" value={currentMember.user || ''} onChange={e => {
-                        const u = availableUsers.find(x => x._id === e.target.value);
-                        setCurrentMember({
-                          ...currentMember,
-                          user: e.target.value,
-                          name: u ? u.name : '',
-                          identificationNumber: u ? u.identificationNumber || '' : ''
-                        });
-                      }}>
-                        <option value="">-- No, es personal externo --</option>
-                        {availableUsers.map(u => <option key={u._id} value={u._id}>{u.name} ({u.role})</option>)}
-                      </select>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="form-group mb-0">
-                        <label className="text-xs font-bold text-gray-500 uppercase">Nombre Completo</label>
-                        <input type="text" className="form-input w-full p-2 border rounded" value={currentMember.name} onChange={e => setCurrentMember({ ...currentMember, name: e.target.value })} placeholder="Ej. Juan Perez" disabled={!!currentMember.user} />
-                      </div>
-                      <div className="form-group mb-0">
-                        <label className="text-xs font-bold text-gray-500 uppercase">Número Identificación</label>
-                        <input type="text" className="form-input w-full p-2 border rounded" value={currentMember.identificationNumber} onChange={e => setCurrentMember({ ...currentMember, identificationNumber: e.target.value })} placeholder="Ej. 1102..." disabled={!!currentMember.user} />
-                      </div>
-                    </div>
-                    <div className="form-group mb-0">
-                      <label className="text-xs font-bold text-gray-500 uppercase">Perfil / Rol en Proyecto</label>
-                      <select className="form-select w-full p-2 border rounded" value={currentMember.role} onChange={e => setCurrentMember({ ...currentMember, role: e.target.value })}>
-                        <option>Investigador Principal</option>
-                        <option>Coinvestigador</option>
-                        <option>Estudiante de Pregrado</option>
-                        <option>Joven Investigador</option>
-                        <option>Estudiante de Maestría</option>
-                        <option>Estudiante de Especialización</option>
-                        <option>Estudiante de Doctorado</option>
-                        <option>Posdoctor</option>
-                        <option>Técnico / Auxiliar</option>
-                        <option>Otro</option>
-                      </select>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="form-group mb-0">
-                        <label className="text-xs font-bold text-gray-500 uppercase">Horas x Mes</label>
-                        <input type="number" className="form-input w-full p-2 border rounded" value={currentMember.hoursPerMonth} onChange={e => setCurrentMember({ ...currentMember, hoursPerMonth: Number(e.target.value) })} />
-                      </div>
-                      <div className="form-group mb-0">
-                        <label className="text-xs font-bold text-gray-500 uppercase">Valor Hora ($)</label>
-                        <input type="number" className="form-input w-full p-2 border rounded" value={currentMember.hourlyRate} onChange={e => setCurrentMember({ ...currentMember, hourlyRate: Number(e.target.value) })} />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="form-group mb-0">
-                        <label className="text-xs font-bold text-gray-500 uppercase">Número de Meses</label>
-                        <input type="number" className="form-input w-full p-2 border rounded" value={currentMember.months} onChange={e => setCurrentMember({ ...currentMember, months: Number(e.target.value) })} />
-                      </div>
-                      <div className="form-group mb-0 pt-6">
-                        <label className="flex items-center gap-2 cursor-pointer font-medium text-sm">
-                          <input type="checkbox" className="w-4 h-4" checked={currentMember.isContrapartida} onChange={e => setCurrentMember({ ...currentMember, isContrapartida: e.target.checked })} />
-                          Es Contrapartida
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="bg-primary-50 p-4 rounded-lg flex justify-between items-center border border-primary-100">
-                      <span className="text-xs text-primary-700 font-bold uppercase">Costo Total Calculado:</span>
-                      <span className="text-xl font-bold text-primary-800">${(currentMember.hoursPerMonth * currentMember.hourlyRate * currentMember.months).toLocaleString()}</span>
-                    </div>
-                  </div>
-                  <div className="p-5 border-t bg-gray-50 flex justify-end gap-3">
-                    <button className="btn btn-outline" onClick={() => setShowMemberModal(false)}>Cancelar</button>
-                    <button className="btn btn-primary" onClick={addOrUpdateMember}>Guardar Personal</button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
-        </div>
-      </div>
+        </div>,
+        document.body
+      )}
     </div>
-  </div>,
-  document.body
-)}
-</div>
   );
 };

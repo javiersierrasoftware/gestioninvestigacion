@@ -1,17 +1,35 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
-import { Plus, Edit2, Trash2, Search, ExternalLink, X, Save, Loader2, Users } from 'lucide-react';
+import { 
+  Plus, Edit2, Trash2, Search, ExternalLink, X, Save, 
+  Loader2, Users, Download, ArrowUpDown, ChevronUp, ChevronDown, 
+  Settings2, EyeOff, LayoutPanelLeft 
+} from 'lucide-react';
+import {
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  flexRender,
+  createColumnHelper,
+  type SortingState,
+  type ColumnOrderState,
+  type VisibilityState
+} from '@tanstack/react-table';
 
 interface Group {
   _id: string;
   name: string;
   categoria: string;
   leaderName: string;
+  leaderEmail: string;
   facultad: string;
   grupLAC?: string;
 }
+
+const columnHelper = createColumnHelper<Group>();
 
 export const GruposInvestigacion = () => {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -22,12 +40,22 @@ export const GruposInvestigacion = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Table State
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<any[]>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([
+    'name', 'categoria', 'leaderName', 'leaderEmail', 'facultad', 'grupLAC', 'actions'
+  ]);
+  const [showColumnSettings, setShowColumnSettings] = useState(false);
+
   const { token, user } = useAuth();
 
   const [formData, setFormData] = useState({
     name: '',
     categoria: 'C',
     leaderName: '',
+    leaderEmail: '',
     facultad: 'INGENIERIA',
     grupLAC: ''
   });
@@ -92,6 +120,7 @@ export const GruposInvestigacion = () => {
       name: g.name,
       categoria: g.categoria,
       leaderName: g.leaderName,
+      leaderEmail: g.leaderEmail || '',
       facultad: g.facultad,
       grupLAC: g.grupLAC || ''
     });
@@ -113,10 +142,112 @@ export const GruposInvestigacion = () => {
     }
   };
 
-  const filteredGroups = groups.filter(g => 
-    g.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    g.leaderName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const columns = useMemo(() => [
+    columnHelper.accessor('name', {
+      header: 'Grupo de Investigación',
+      cell: info => <span className="font-bold text-slate-800 uppercase tracking-tight" style={{ fontSize: '9.5px' }}>{info.getValue()}</span>,
+    }),
+    columnHelper.accessor('categoria', {
+      header: 'Categoría',
+      cell: info => (
+        <span className="badge font-black px-2 py-0.5" style={{ backgroundColor: '#ecfdf5', color: '#047857', border: '1px solid #dcfce7', fontSize: '8px' }}>
+          {info.getValue()}
+        </span>
+      ),
+    }),
+    columnHelper.accessor('leaderName', {
+      header: 'Líder de Investigación',
+      cell: info => <span className="text-slate-600 font-medium" style={{ fontSize: '9.5px' }}>{info.getValue()}</span>,
+    }),
+    columnHelper.accessor('leaderEmail', {
+      header: 'Email del Líder',
+      cell: info => <span className="text-slate-400 lowercase italic" style={{ fontSize: '9.5px' }}>{info.getValue()}</span>,
+    }),
+    columnHelper.accessor('facultad', {
+      header: 'Facultad',
+      cell: info => <span className="text-slate-500 font-bold uppercase tracking-tighter" style={{ fontSize: '9.5px' }}>{info.getValue()}</span>,
+    }),
+    columnHelper.accessor('grupLAC', {
+      header: 'GrupLAC',
+      cell: info => info.getValue() ? (
+        <a href={info.getValue() as string} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 font-bold flex items-center gap-1 text-xs">
+          Enlace <ExternalLink size={12}/>
+        </a>
+      ) : <span className="text-slate-300 italic text-xs">Sin asignar</span>,
+    }),
+    columnHelper.display({
+      id: 'actions',
+      header: 'Acciones',
+      cell: info => (
+        <div className="flex justify-start md:justify-end gap-2">
+          <button 
+            className="transition-all"
+            style={{ padding: '6px', color: '#059669', border: '1px solid #dcfce7', borderRadius: '6px', backgroundColor: '#ecfdf5' }}
+            title="Editar grupo"
+            onClick={() => handleEdit(info.row.original)}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dcfce7'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#ecfdf5'; }}
+          >
+            <Edit2 size={14} />
+          </button>
+          <button 
+            className="transition-all"
+            style={{ padding: '6px', color: '#ef4444', border: '1px solid #fee2e2', borderRadius: '6px', backgroundColor: '#fef2f2' }}
+            title="Eliminar grupo"
+            onClick={() => handleDelete(info.row.original._id)}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fee2e2'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#fef2f2'; }}
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      ),
+    }),
+  ], []);
+
+  const table = useReactTable({
+    data: groups,
+    columns,
+    state: {
+      sorting,
+      globalFilter: searchTerm,
+      columnFilters,
+      columnVisibility,
+      columnOrder,
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onColumnOrderChange: setColumnOrder,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onGlobalFilterChange: setSearchTerm,
+  });
+
+  const exportToCSV = () => {
+    const rows = table.getFilteredRowModel().rows;
+    const header = ['Nombre', 'Categoria', 'Lider', 'Email', 'Facultad', 'Enlace'];
+    const data = rows.map(r => [
+      r.original.name,
+      r.original.categoria,
+      r.original.leaderName,
+      r.original.leaderEmail || '',
+      r.original.facultad,
+      r.original.grupLAC || ''
+    ]);
+    
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [header, ...data].map(e => e.join(",")).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `grupos_investigacion_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   if (!user || (user.role !== 'admin' && user.role !== 'division_investigacion')) {
     return <div className="p-10 text-center">No tiene permisos.</div>;
@@ -133,7 +264,7 @@ export const GruposInvestigacion = () => {
           className="btn btn-primary" 
           onClick={() => { 
             setIsEdit(false); 
-            setFormData({ name: '', categoria: 'C', leaderName: '', facultad: 'INGENIERIA', grupLAC: '' }); 
+            setFormData({ name: '', categoria: 'C', leaderName: '', leaderEmail: '', facultad: 'INGENIERIA', grupLAC: '' }); 
             setShowModal(true); 
           }}
         >
@@ -141,15 +272,148 @@ export const GruposInvestigacion = () => {
         </button>
       </div>
 
-      <div className="card mb-6 flex items-center gap-3 py-3">
-        <Search size={20} className="text-gray-400" />
-        <input 
-          type="text" 
-          placeholder="Buscar por nombre o líder..." 
-          className="bg-transparent border-none outline-none w-full text-sm"
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-        />
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div 
+          className="flex-1 flex items-center gap-3 shadow-sm bg-white"
+          style={{ 
+            border: '1px solid #e2e8f0', 
+            borderRadius: '6px', 
+            padding: '0 12px',
+            height: '36px'
+          }}
+        >
+          <Search size={14} className="text-slate-400" />
+          <input 
+            type="text" 
+            placeholder="Búsqueda inteligente por nombre, líder o facultad..." 
+            className="w-full font-medium text-slate-700 outline-none placeholder:text-slate-400"
+            style={{ 
+              background: 'transparent',
+              border: 'none', 
+              outline: 'none', 
+              fontSize: '9.5px',
+              height: '100%'
+            }}
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+        </div>
+        
+        <div className="flex flex-row gap-2">
+          <div className="relative">
+            <button 
+              className={`shadow-sm flex items-center justify-center gap-2 font-bold uppercase tracking-tight w-full md:w-auto`}
+              style={{
+                backgroundColor: showColumnSettings ? '#1e293b' : '#ffffff',
+                color: showColumnSettings ? '#ffffff' : '#64748b',
+                border: showColumnSettings ? '1px solid #1e293b' : '1px solid #e2e8f0',
+                borderRadius: '6px',
+                padding: '0 16px',
+                fontSize: '9.5px',
+                height: '36px',
+                minWidth: '120px'
+              }}
+              onClick={() => setShowColumnSettings(!showColumnSettings)}
+              title="Gestionar Columnas"
+            >
+              <Settings2 size={13} />
+              <span>Columnas</span>
+            </button>
+            
+            {showColumnSettings && (
+              <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 p-4 animate-fade-in scale-in origin-top-right">
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-50">
+                  <LayoutPanelLeft size={16} className="text-emerald-600" />
+                  <span className="text-xs font-black text-slate-800 uppercase tracking-widest">Visibilidad</span>
+                </div>
+                <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                  {table.getAllLeafColumns().map(column => {
+                    return (
+                      <label key={column.id} className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors group">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                          checked={column.getIsVisible()}
+                          onChange={column.getToggleVisibilityHandler()}
+                        />
+                        <span className="text-[11px] font-bold text-slate-600 uppercase tracking-tight group-hover:text-slate-900 flex-1">
+                          {column.id === 'actions' ? 'Acciones' : 
+                           column.id === 'name' ? 'Nombre' : 
+                           column.id === 'categoria' ? 'Categoría' : 
+                           column.id === 'leaderName' ? 'Líder' : 
+                           column.id === 'leaderEmail' ? 'Email Líder' : 
+                           column.id === 'facultad' ? 'Facultad' : column.id}
+                        </span>
+                        
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button 
+                            className="p-1 hover:bg-slate-200 rounded text-slate-400 hover:text-slate-600"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const index = columnOrder.indexOf(column.id);
+                              if (index > 0) {
+                                const newOrder = [...columnOrder];
+                                const temp = newOrder[index];
+                                newOrder[index] = newOrder[index - 1];
+                                newOrder[index - 1] = temp;
+                                setColumnOrder(newOrder);
+                              }
+                            }}
+                          >
+                            <ChevronUp size={12} />
+                          </button>
+                          <button 
+                            className="p-1 hover:bg-slate-200 rounded text-slate-400 hover:text-slate-600"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const index = columnOrder.indexOf(column.id);
+                              if (index < columnOrder.length - 1) {
+                                const newOrder = [...columnOrder];
+                                const temp = newOrder[index];
+                                newOrder[index] = newOrder[index + 1];
+                                newOrder[index + 1] = temp;
+                                setColumnOrder(newOrder);
+                              }
+                            }}
+                          >
+                            <ChevronDown size={12} />
+                          </button>
+                        </div>
+                        {!column.getIsVisible() && <EyeOff size={14} className="ml-2 text-slate-300" />}
+                      </label>
+                    )
+                  })}
+                </div>
+                <div className="mt-4 pt-2 border-t border-slate-50 text-[10px] text-slate-400 italic font-medium">
+                  Clica para ocultar/mostrar columnas
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button 
+            className="shadow-sm flex items-center justify-center gap-2 font-bold uppercase tracking-tight transition-colors w-full md:w-auto"
+            style={{
+              backgroundColor: '#ffffff',
+              color: '#64748b',
+              border: '1px solid #e2e8f0',
+              borderRadius: '6px',
+              padding: '0 16px',
+              fontSize: '9.5px',
+              height: '36px',
+              minWidth: '120px'
+            }}
+            onClick={exportToCSV}
+            title="Exportar a CSV/Excel"
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#ecfdf5'; e.currentTarget.style.color = '#047857'; e.currentTarget.style.borderColor = '#dcfce7'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#ffffff'; e.currentTarget.style.color = '#64748b'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
+          >
+            <Download size={13} className="text-emerald-600" />
+            <span>Exportar</span>
+          </button>
+        </div>
       </div>
 
       <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white">
@@ -159,50 +423,99 @@ export const GruposInvestigacion = () => {
                 Cargando grupos de investigación...
              </div>
         ) : (
-            <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 border-b font-bold text-gray-600">
-                <tr>
-                  <th className="p-4">Grupo de Investigación</th>
-                  <th className="p-4">Categoría</th>
-                  <th className="p-4">Líder</th>
-                  <th className="p-4">Facultad</th>
-                  <th className="p-4">GrupLAC</th>
-                  <th className="p-4 text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {filteredGroups.map(g => (
-                  <tr key={g._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="p-4 font-medium text-gray-900">{g.name}</td>
-                    <td className="p-4">
-                       <span className="badge bg-primary-50 text-primary-700 border border-primary-100">{g.categoria}</span>
-                    </td>
-                    <td className="p-4 text-gray-600">{g.leaderName}</td>
-                    <td className="p-4 text-gray-500 text-xs">{g.facultad}</td>
-                    <td className="p-4">
-                      {g.grupLAC ? (
-                        <a href={g.grupLAC} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
-                          Link <ExternalLink size={12}/>
-                        </a>
-                      ) : <span className="text-gray-300 italic">No asignado</span>}
-                    </td>
-                    <td className="p-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button className="flex items-center gap-1 px-3 py-1.5 text-primary-600 hover:bg-primary-50 rounded-md border border-primary-100 transition-colors font-medium text-xs" onClick={() => handleEdit(g)}>
-                          <Edit2 size={14}/> Editar
-                        </button>
-                        <button className="p-1.5 text-red-500 hover:bg-red-50 rounded-md border border-red-50 transition-colors" title="Eliminar" onClick={() => handleDelete(g._id)}>
-                          <Trash2 size={16}/>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {filteredGroups.length === 0 && (
-                   <tr><td colSpan={6} className="p-10 text-center text-gray-400 italic">No se encontraron grupos.</td></tr>
-                )}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <React.Fragment key={headerGroup.id}>
+                      {/* Row 1: Titles and Sorting */}
+                      <tr className="bg-slate-50/80 border-b border-slate-100">
+                        {headerGroup.headers.map(header => (
+                          <th key={header.id} className="px-4 py-4 pb-2 transition-all group">
+                            {header.isPlaceholder ? null : (
+                              <div 
+                                className={`flex items-center gap-2 cursor-pointer select-none ${header.column.getCanSort() ? 'hover:text-emerald-700' : ''}`}
+                                onClick={header.column.getToggleSortingHandler()}
+                              >
+                                <span className="font-black text-slate-500 uppercase tracking-widest whitespace-nowrap" style={{ fontSize: '9.5px' }}>
+                                  {flexRender(header.column.columnDef.header, header.getContext())}
+                                </span>
+                                {header.column.getCanSort() && (
+                                  <div className="text-slate-300 group-hover:text-emerald-500 transition-colors">
+                                    {{
+                                      asc: <ChevronUp size={12} />,
+                                      desc: <ChevronDown size={12} />,
+                                    }[header.column.getIsSorted() as string] ?? <ArrowUpDown size={10} className="opacity-30" />}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </th>
+                        ))}
+                      </tr>
+                      {/* Row 2: Specific Filters */}
+                      <tr className="bg-white/50 border-b border-slate-100/50" style={{ borderBottom: '1px solid #e2e8f0' }}>
+                        {headerGroup.headers.map(header => (
+                          <th key={`filter-${header.id}`} className="px-3.5 py-2.5 pb-4 transition-all">
+                            {header.column.id !== 'actions' && (
+                              <div className="relative group/filter">
+                                <input 
+                                  type="text"
+                                  placeholder="Filtrar..."
+                                  className="w-full font-medium text-slate-500 outline-none transition-all placeholder:text-slate-200"
+                                  style={{ 
+                                    backgroundColor: '#ffffff',
+                                    border: '1px solid #e2e8f0', 
+                                    borderRadius: '4px',
+                                    padding: '4px 8px', 
+                                    fontSize: '9.5px',
+                                    height: '24px'
+                                  }}
+                                  value={(header.column.getFilterValue() ?? '') as string}
+                                  onChange={e => header.column.setFilterValue(e.target.value)}
+                                  onClick={e => e.stopPropagation()}
+                                  onFocus={e => e.target.style.borderColor = '#34d399'}
+                                  onBlur={e => e.target.style.borderColor = '#e2e8f0'}
+                                />
+                              </div>
+                            )}
+                          </th>
+                        ))}
+                      </tr>
+                    </React.Fragment>
+                  ))}
+                </thead>
+                <tbody className="bg-white">
+                  {table.getRowModel().rows.map(row => (
+                    <tr 
+                      key={row.id} 
+                      className="transition-all duration-200 text-slate-700"
+                      style={{ fontSize: '9.5px', cursor: 'default' }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(236, 253, 245, 0.4)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    >
+                      {row.getVisibleCells().map(cell => (
+                        <td key={cell.id} className="p-4 align-middle" style={{ borderBottom: '1px solid #dcfce7' }}>
+                          <div className="font-medium">
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </div>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              
+              {table.getRowModel().rows.length === 0 && (
+                <div className="p-20 text-center">
+                  <div className="flex flex-col items-center justify-center text-slate-300">
+                    <Search size={48} className="mb-4 opacity-20" />
+                    <p className="font-black uppercase tracking-widest text-xs">No se encontraron resultados</p>
+                    <p className="text-[11px] font-medium mt-1">Intenta con otros términos de búsqueda</p>
+                  </div>
+                </div>
+              )}
+            </div>
         )}
       </div>
 
@@ -279,6 +592,18 @@ export const GruposInvestigacion = () => {
                   />
                   <Users size={16} className="text-muted" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
                 </div>
+              </div>
+
+              <div className="form-group mb-4">
+                <label className="text-xs font-bold text-primary-700 uppercase tracking-wider mb-1 block">Email del Líder</label>
+                <input 
+                  type="email"
+                  required 
+                  className="form-input" 
+                  value={formData.leaderEmail} 
+                  onChange={e => setFormData({...formData, leaderEmail: e.target.value})} 
+                  placeholder="ejemplo@unisucre.edu.co"
+                />
               </div>
 
               <div className="form-group mb-4">

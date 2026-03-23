@@ -56,6 +56,26 @@ export const AdminDashboard = () => {
     return Object.keys(categories).map(k => ({ name: k, value: categories[k] }));
   };
 
+  const groupsByCategory = () => {
+    const categories = data.groups.reduce((acc: any, g) => {
+      const cat = g.categoria || 'Sin Categoría';
+      acc[cat] = (acc[cat] || 0) + 1;
+      return acc;
+    }, {});
+    // Ordenar categorías comunes para mejor lectura
+    const order = ['A1', 'A', 'B', 'C', 'RECONOCIDO', 'Sin Categoría'];
+    return Object.keys(categories)
+      .sort((a, b) => {
+        const idxA = order.indexOf(a.toUpperCase());
+        const idxB = order.indexOf(b.toUpperCase());
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+        return a.localeCompare(b);
+      })
+      .map(k => ({ name: k, value: categories[k] }));
+  };
+
   const groupsByFaculty = () => {
     const faculties = data.groups.reduce((acc: any, g) => {
       const fac = g.facultad || 'Otra';
@@ -150,7 +170,7 @@ export const AdminDashboard = () => {
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2">
               <PieIcon size={18} className="text-emerald-600" />
-              Grupos de Investigación por Facultad
+              Grupos por Facultad
             </h3>
           </div>
           <ResponsiveContainer width="100%" height="85%">
@@ -174,6 +194,28 @@ export const AdminDashboard = () => {
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
               />
             </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* CHART: Groups by Category */}
+        <div className="card flex flex-col p-6 border-none shadow-xl shadow-gray-100" style={{ height: '400px' }}>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2">
+              <Layers size={18} className="text-emerald-600" />
+              Grupos por Clasificación Minciencias
+            </h3>
+          </div>
+          <ResponsiveContainer width="100%" height="85%">
+            <BarChart data={groupsByCategory()} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} />
+              <YAxis fontSize={10} axisLine={false} tickLine={false} />
+              <Tooltip 
+                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                cursor={{ fill: '#f8fafc' }}
+              />
+              <Bar dataKey="value" fill="#059669" radius={[6, 6, 0, 0]} barSize={40} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
 

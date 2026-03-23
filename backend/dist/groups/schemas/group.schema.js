@@ -16,6 +16,7 @@ let Group = class Group {
     description;
     categoria;
     leaderName;
+    leaderEmail;
     grupLAC;
     facultad;
     areaConocimiento;
@@ -37,6 +38,10 @@ __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Group.prototype, "leaderName", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Group.prototype, "leaderEmail", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)

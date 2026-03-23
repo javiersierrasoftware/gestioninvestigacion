@@ -54,7 +54,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </div>
             <span className="heading-3 text-primary-900 group-hover:text-primary-700 tracking-tight flex items-center">
               SIGAI
-              <span className="mobile:hidden ml-2 text-sm font-semibold text-secondary opacity-60 border-l border-gray-300 pl-2"> Académica e Investigativa</span>
+              <span className="mobile:hidden ml-2 text-sm font-semibold text-secondary opacity-60 border-l border-gray-300 pl-2"> Universidad de Sucre</span>
             </span>
           </Link>
 
@@ -62,9 +62,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             {isAuthenticated ? (
               <>
                 <div className="hidden lg:flex items-center mr-4 border-r border-gray-200 pr-4">
-                  <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-800 font-bold text-sm shadow-sm mr-2 border border-emerald-200">
-                    {user?.name?.charAt(0) || 'U'}
-                  </div>
                   <div className="flex flex-col">
                     <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-0.5">{user?.role}</span>
                     <span className="text-sm font-semibold text-gray-800 leading-none">{user?.name}</span>
@@ -178,7 +175,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
             <div className="footer-section">
               <h4>Soporte</h4>
-              <a href="#" className="footer-link">Grupo MANGLAR</a>
               <a href="#" className="footer-link">Guías de Usuario</a>
               <a href="#" className="footer-link">Contacto Técnico</a>
             </div>
@@ -201,7 +197,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 };
 
 const HomePage = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [convocatorias, setConvocatorias] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -288,11 +284,11 @@ const HomePage = () => {
         </div>
       </div>
 
-      <div id="convocatorias" className="w-full bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50">
+      <div id="convocatorias" className="w-full bg-slate-50/50 rounded-3xl p-8 md:p-12 border border-slate-100 shadow-xl shadow-gray-200/50">
         <div className="flex flex-col md:flex-row justify-between md:items-center items-stretch mb-8 gap-4 border-b border-gray-100 pb-6">
           <div>
-            <h2 className="heading-3 text-primary-900 mb-1">Convocatorias Abiertas</h2>
-            <p className="text-sm text-secondary">Consulta las oportunidades vigentes para radicar proyectos.</p>
+            <h2 className="text-xl font-extrabold text-slate-800 mb-1">Convocatorias Abiertas</h2>
+            <p className="text-[13px] text-slate-500 font-medium">Consulta las oportunidades vigentes para radicar proyectos.</p>
           </div>
           <div className="relative w-full md:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -314,35 +310,66 @@ const HomePage = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {currentConvos.map((convo) => (
-                <div key={convo._id} className="group flex flex-col p-5 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-primary-200 hover:shadow-lg transition-all">
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-1 rounded">#{convo.number}</span>
-                    <div className="flex items-center gap-1 text-[10px] font-bold text-success-600 uppercase">
-                      <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></div>
-                      Disponible
+                <div key={convo._id} className="group relative flex flex-col rounded-3xl border border-slate-200 bg-white hover:border-primary-400 hover:shadow-2xl hover:shadow-primary-100/50 transition-all duration-300 overflow-hidden shadow-sm">
+                  {/* Card Header Decoration */}
+                  <div className="h-2 bg-gradient-to-r from-primary-400 to-emerald-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                  <div className="p-7 flex flex-col flex-1">
+                    <div className="flex justify-between items-start mb-5">
+                      <div className="px-3 py-1 rounded-full bg-slate-100 text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                        Nº {convo.number}
+                      </div>
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[9px] font-bold text-emerald-600 border border-emerald-100 uppercase tracking-tight">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        Vigente
+                      </div>
+                    </div>
+
+                    <h4 className="text-base font-bold text-slate-800 mb-3 group-hover:text-primary-700 transition-colors leading-snug tracking-tight">
+                      {convo.title}
+                    </h4>
+
+                    <p className="text-[12px] text-slate-500 line-clamp-4 mb-6 leading-relaxed flex-1 font-medium">
+                      {convo.description}
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                      <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                        <Calendar size={13} className="text-primary-500" />
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-bold text-slate-400 mb-1 uppercase tracking-wider">Cierre</span>
+                          <span className="text-[11px] font-semibold text-slate-700 leading-none">{new Date(convo.endDate).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-slate-100/50 shadow-sm">
+                        <Users size={13} className="text-primary-500" />
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-bold text-slate-400 mb-1 uppercase tracking-wider">Dirigido a</span>
+                          <span className="text-[11px] font-semibold text-slate-700 leading-none truncate w-24">{convo.directedTo || 'Docentes'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-6 border-t border-slate-100 mt-auto">
+                      {isAuthenticated ? (
+                        user?.role === 'docente' ? (
+                          <Link to="/radicacion" className="btn btn-primary w-full h-10 font-bold text-[11px] tracking-wide shadow-lg shadow-primary-500/10 group-hover:scale-[1.01]">
+                            Radicar Proyecto
+                          </Link>
+                        ) : (
+                          <div className="text-center py-2 text-[10px] font-bold text-slate-400 uppercase italic">
+                            No habilitado p/ rol
+                          </div>
+                        )
+                      ) : (
+                        <Link to="/login" className="btn btn-outline w-full h-10 border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-[11px] tracking-wide group-hover:border-primary-400">
+                          Postularse
+                        </Link>
+                      )}
                     </div>
                   </div>
-                  <h4 className="font-bold text-gray-900 mb-2 group-hover:text-primary-700 transition-colors uppercase text-sm tracking-tight">{convo.title}</h4>
-                  <p className="text-xs text-secondary line-clamp-3 mb-4 leading-relaxed flex-1">
-                    {convo.description}
-                  </p>
-                  <div className="flex flex-wrap gap-4 text-[10px] font-semibold text-gray-500 border-t border-gray-100 pt-3">
-                    <div className="flex items-center gap-1">
-                      <Calendar size={12} className="text-primary-400" />
-                      Cierra: {new Date(convo.endDate).toLocaleDateString()}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Users size={12} className="text-primary-400" />
-                      {convo.directedTo}
-                    </div>
-                  </div>
-                  {!isAuthenticated && (
-                    <Link to="/login" className="mt-4 pt-3 border-t border-dashed border-gray-200 text-center text-primary-600 font-bold text-xs hover:text-primary-700">
-                      Ingresar para Postularse →
-                    </Link>
-                  )}
                 </div>
               ))}
             </div>
@@ -380,6 +407,9 @@ const HomePage = () => {
           </>
         )}
       </div>
+
+      {/* ESPACIADOR FINAL ANTES DEL FOOTER */}
+      <div className="h-20 w-full"></div>
     </div>
   );
 };

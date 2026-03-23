@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   Legend
 } from 'recharts';
-import { 
+import {
   TrendingUp, BookOpen, Award, FileText, CheckCircle, Clock, Layers, Users,
   Wallet, Star, Activity, PieChart as PieIcon, BarChart3, Briefcase, GraduationCap
 } from 'lucide-react';
@@ -98,7 +98,7 @@ export const DocenteDashboard = () => {
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     const currentYear = new Date().getFullYear();
     const stats = months.map(m => ({ month: m, Proyectos: 0, Productos: 0 }));
-    
+
     data.projects.forEach(p => {
       const d = new Date(p.createdAt);
       if (d.getFullYear() === currentYear) stats[d.getMonth()].Proyectos++;
@@ -154,9 +154,9 @@ export const DocenteDashboard = () => {
   // 10. Top Tipologías Summary
   const topCategories = useMemo(() => {
     const stats = data.products.reduce((acc: any, p) => {
-        const cat = p.category || 'Varios';
-        acc[cat] = (acc[cat] || 0) + 1;
-        return acc;
+      const cat = p.category || 'Varios';
+      acc[cat] = (acc[cat] || 0) + 1;
+      return acc;
     }, {});
     return Object.keys(stats).map(k => ({ name: k.toUpperCase(), value: stats[k] }));
   }, [data.products]);
@@ -201,14 +201,14 @@ export const DocenteDashboard = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <StatCard icon={<Briefcase color="#3b82f6"/>} label="Mis Proyectos" value={data.projects.length} detail="Como IP" theme="blue" />
-        <StatCard icon={<CheckCircle color="#10b981"/>} label="Mis Eval." value={data.evaluations.length} detail="Como Par Evaluador" theme="emerald" />
-        <StatCard icon={<BookOpen color="#8b5cf6"/>} label="Producción" value={data.products.length} detail="Total Registros" theme="purple" />
-        <StatCard icon={<Wallet color="#f59e0b"/>} label="Puntos Acum." value={totalPoints.toFixed(2)} detail="Aprobados CIARP" theme="amber" />
+        <StatCard icon={<Briefcase color="#3b82f6" />} label="Mis Proyectos" value={data.projects.length} detail="Como IP" theme="blue" />
+        <StatCard icon={<CheckCircle color="#10b981" />} label="Mis Eval." value={data.evaluations.length} detail="Como Par Evaluador" theme="emerald" />
+        <StatCard icon={<BookOpen color="#8b5cf6" />} label="Producción" value={data.products.length} detail="Total Registros" theme="purple" />
+        <StatCard icon={<Wallet color="#f59e0b" />} label="Puntos Acum." value={totalPoints.toFixed(2)} detail="Aprobados CIARP" theme="amber" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
+
         {/* CHART 1: Production by Type (Bar) */}
         <div className="card md:p-8 flex flex-col border-none shadow-xl shadow-gray-100" style={{ height: '420px', minHeight: '420px' }}>
           <h3 className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2 mb-8">
@@ -221,7 +221,7 @@ export const DocenteDashboard = () => {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} angle={-15} textAnchor="end" height={60} />
                 <YAxis fontSize={10} axisLine={false} tickLine={false} />
-                <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}} />
+                <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
                 <Bar dataKey="value" fill="#8b5cf6" radius={[6, 6, 0, 0]} barSize={35} />
               </BarChart>
             </ResponsiveContainer>
@@ -230,7 +230,7 @@ export const DocenteDashboard = () => {
 
         {/* CHART 2: Project Status (Pie) */}
         <div className="card md:p-8 flex flex-col border-none shadow-xl shadow-gray-100" style={{ height: '420px', minHeight: '420px' }}>
-           <h3 className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2 mb-8">
+          <h3 className="text-sm font-black text-gray-700 uppercase tracking-widest flex items-center gap-2 mb-8">
             <PieIcon size={18} className="text-emerald-600" />
             Estado de Mis Proyectos Radicados
           </h3>
@@ -240,8 +240,8 @@ export const DocenteDashboard = () => {
                 <Pie data={projectsByStatus} cx="50%" cy="45%" innerRadius={70} outerRadius={110} paddingAngle={8} dataKey="value" stroke="none">
                   {projectsByStatus.map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                 </Pie>
-                <Tooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}} />
-                <Legend verticalAlign="bottom" height={36} iconType="rect" formatter={(value) => <span className="text-[10px] font-bold text-gray-500 uppercase">{value}</span>}/>
+                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                <Legend verticalAlign="bottom" height={36} iconType="rect" formatter={(value) => <span className="text-[10px] font-bold text-gray-500 uppercase">{value}</span>} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -259,7 +259,7 @@ export const DocenteDashboard = () => {
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
                 <XAxis type="number" fontSize={10} axisLine={false} tickLine={false} />
                 <YAxis dataKey="name" type="category" fontSize={9} axisLine={false} tickLine={false} width={80} />
-                <Tooltip cursor={{fill: 'transparent'}} contentStyle={{borderRadius: '12px', border: 'none'}} />
+                <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
                 <Bar dataKey="points" fill="#f59e0b" radius={[0, 6, 6, 0]} barSize={20} />
               </BarChart>
             </ResponsiveContainer>
@@ -276,7 +276,7 @@ export const DocenteDashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={profileProgress}>
                 <PolarGrid stroke="#e2e8f0" />
-                <PolarAngleAxis dataKey="subject" fontSize={10} tick={{fill: '#64748b', fontWeight: 600}} />
+                <PolarAngleAxis dataKey="subject" fontSize={10} tick={{ fill: '#64748b', fontWeight: 600 }} />
                 <PolarRadiusAxis angle={30} domain={[0, 10]} fontSize={8} tick={false} axisLine={false} />
                 <Radar name={user?.name} dataKey="A" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.5} strokeWidth={3} />
               </RadarChart>
@@ -295,18 +295,18 @@ export const DocenteDashboard = () => {
               <AreaChart data={monthlyActivity} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorProd" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorProj" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="month" fontSize={11} axisLine={false} tickLine={false} />
                 <YAxis fontSize={11} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}} />
+                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
                 <Area type="monotone" dataKey="Productos" stroke="#10b981" strokeWidth={4} fill="url(#colorProd)" fillOpacity={1} />
                 <Area type="monotone" dataKey="Proyectos" stroke="#3b82f6" strokeWidth={4} fill="url(#colorProj)" fillOpacity={1} />
                 <Legend verticalAlign="top" align="right" iconType="circle" />
@@ -327,8 +327,8 @@ export const DocenteDashboard = () => {
                 <Pie data={evaluationsStatus} cx="50%" cy="50%" outerRadius={100} dataKey="value" stroke="none">
                   {evaluationsStatus.map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[(index + 4) % COLORS.length]} />)}
                 </Pie>
-                <Tooltip contentStyle={{borderRadius: '12px', border: 'none'}} />
-                <Legend iconType="circle" formatter={(value) => <span className="text-[10px] font-bold text-gray-500 uppercase">{value}</span>}/>
+                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none' }} />
+                <Legend iconType="circle" formatter={(value) => <span className="text-[10px] font-bold text-gray-500 uppercase">{value}</span>} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -346,7 +346,7 @@ export const DocenteDashboard = () => {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" fontSize={9} axisLine={false} tickLine={false} height={40} />
                 <YAxis fontSize={10} axisLine={false} tickLine={false} />
-                <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{borderRadius: '12px', border: 'none'}} />
+                <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
                 <Bar dataKey="value" fill="#f59e0b" radius={[6, 6, 0, 0]} barSize={40} />
               </BarChart>
             </ResponsiveContainer>
@@ -366,8 +366,8 @@ export const DocenteDashboard = () => {
                   <Cell fill="#f43f5e" />
                   <Cell fill="#fb7185" />
                 </Pie>
-                <Tooltip contentStyle={{borderRadius: '12px', border: 'none'}} />
-                <Legend iconType="circle" formatter={(value) => <span className="text-[10px] font-bold text-gray-500 uppercase">{value}</span>}/>
+                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none' }} />
+                <Legend iconType="circle" formatter={(value) => <span className="text-[10px] font-bold text-gray-500 uppercase">{value}</span>} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -385,7 +385,7 @@ export const DocenteDashboard = () => {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="day" fontSize={10} axisLine={false} tickLine={false} />
                 <YAxis fontSize={10} axisLine={false} tickLine={false} />
-                <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{borderRadius: '12px', border: 'none'}} />
+                <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
                 <Bar dataKey="value" fill="#64748b" radius={[6, 6, 0, 0]} barSize={30} />
               </BarChart>
             </ResponsiveContainer>
@@ -404,8 +404,8 @@ export const DocenteDashboard = () => {
                 <Pie data={topCategories} cx="50%" cy="50%" outerRadius={110} dataKey="value" stroke="none">
                   {topCategories.map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[(index + 2) % COLORS.length]} />)}
                 </Pie>
-                <Tooltip contentStyle={{borderRadius: '12px', border: 'none'}} />
-                <Legend iconType="circle" formatter={(value) => <span className="text-[10px] font-bold text-gray-500 uppercase">{value}</span>}/>
+                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none' }} />
+                <Legend iconType="circle" formatter={(value) => <span className="text-[10px] font-bold text-gray-500 uppercase">{value}</span>} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -413,25 +413,25 @@ export const DocenteDashboard = () => {
 
         {/* EXTRA STATS - Numerical / Logic */}
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Valor Punto 2024</p>
-                <p className="text-2xl font-black text-primary-900">$ 22.358</p>
-                <p className="text-[11px] text-emerald-600 font-bold mt-2 flex items-center gap-1">
-                    <TrendingUp size={10} /> Actualización anual
-                </p>
-            </div>
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Proyección Salarial</p>
-                <p className="text-2xl font-black text-emerald-700">
-                    $ {new Intl.NumberFormat('es-CO').format(totalPoints * 22358)}
-                </p>
-                <p className="text-[11px] text-secondary opacity-60 font-medium mt-2">Mensual aproximado</p>
-            </div>
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-blue-500">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Índice H-Google Scholar</p>
-                <p className="text-2xl font-black text-indigo-700">Lincado</p>
-                <p className="text-[11px] text-primary-500 font-bold mt-2">Sincronización Perfil</p>
-            </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Valor Punto 2025</p>
+            <p className="text-2xl font-black text-primary-900">$ 22.358</p>
+            <p className="text-[11px] text-emerald-600 font-bold mt-2 flex items-center gap-1">
+              <TrendingUp size={10} /> Actualización anual
+            </p>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Proyección Salarial</p>
+            <p className="text-2xl font-black text-emerald-700">
+              $ {new Intl.NumberFormat('es-CO').format(totalPoints * 22358)}
+            </p>
+            <p className="text-[11px] text-secondary opacity-60 font-medium mt-2">Mensual aproximado</p>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-blue-500">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Índice H-Google Scholar</p>
+            <p className="text-2xl font-black text-indigo-700">Lincado</p>
+            <p className="text-[11px] text-primary-500 font-bold mt-2">Sincronización Perfil</p>
+          </div>
         </div>
 
       </div>
@@ -446,7 +446,7 @@ const StatCard = ({ icon, label, value, detail, theme }: any) => {
     purple: "bg-purple-50 text-purple-600 border-purple-100",
     amber: "bg-amber-50 text-amber-600 border-amber-100"
   };
-  
+
   return (
     <div className="card p-6 border-gray-100 hover:border-primary-200 hover:shadow-lg transition-all">
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 border ${themes[theme]}`}>

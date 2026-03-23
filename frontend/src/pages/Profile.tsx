@@ -3,6 +3,14 @@ import { useAuth } from '../context/AuthContext';
 import { User, Mail, Phone, Lock, GraduationCap, Award, FileText, Save, Loader2, ShieldCheck, UserCircle, Briefcase, X } from 'lucide-react';
 import api from '../api/axios';
 
+  const facultyPrograms: Record<string, string[]> = {
+    'CIENCIAS AGROPECUARIAS': ['ZOOTECNIA'],
+    'CIENCIAS ECONÓMICAS Y ADMINISTRATIVAS': ['ADMINISTRACION DE EMPRESAS', 'CONTADURIA PUBLICA', 'ECONOMIA'],
+    'CIENCIAS DE LA SALUD': ['ENFERMERIA', 'FONOAUDIOLOGIA', 'MEDICINA', 'REGENCIA EN FARMACIA'],
+    'EDUCACIÓN Y CIENCIAS': ['BIOLOGIA', 'DERECHO', 'LICENCIATURA EN LENGUAS EXTRANJERAS', 'LICENCIATURA EN MATEMÁTICAS', 'LICENCIATURA EN FISICA'],
+    'INGENIERÍAS': ['INGENIERIA AGRICOLA', 'INGENIERIA AGROINDUSTRIAL', 'INGENIERIA CIVIL', 'INGENIERIA ELECTRÓNICA']
+  };
+
 export const Profile = () => {
   const { user, token, login } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -52,7 +60,18 @@ export const Profile = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    setFormData(prev => {
+      const newData = { ...prev, [name]: value };
+      
+      // Reset programa if facultad changes
+      if (name === 'facultad') {
+        newData.programa = '';
+      }
+      
+      return newData;
+    });
+
     setError('');
     setSuccess(false);
   };
@@ -158,34 +177,22 @@ export const Profile = () => {
                <h3 className="font-bold text-gray-800 uppercase text-xs tracking-wider">Información Académica e Institucional</h3>
             </div>
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="form-group mb-0">
+              <div className="form-group mb-0 text-left">
                 <label className="form-label text-[11px] font-bold text-gray-500">Facultad Aval</label>
                 <select name="facultad" className="form-select bg-gray-50/50" value={formData.facultad} onChange={handleChange}>
-                   <option>INGENIERIA</option>
-                   <option>EDUCACIÓN Y CIENCIAS</option>
-                   <option>CIENCIAS DE LA SALUD</option>
-                   <option>CIENCIAS ECONÓMICAS Y ADMINISTRATIVAS</option>
-                   <option>CIENCIAS AGROPECUARIAS</option>
+                   <option value="">Seleccione una facultad...</option>
+                   {Object.keys(facultyPrograms).map(f => (
+                     <option key={f} value={f}>{f}</option>
+                   ))}
                 </select>
               </div>
-              <div className="form-group mb-0">
+              <div className="form-group mb-0 text-left">
                 <label className="form-label text-[11px] font-bold text-gray-500">Programa Académico</label>
-                <select name="programa" className="form-select bg-gray-50/50" value={formData.programa} onChange={handleChange}>
+                <select name="programa" className="form-select bg-gray-50/50" value={formData.programa} onChange={handleChange} disabled={!formData.facultad}>
                    <option value="">Seleccione un programa...</option>
-                   <option>Ingeniería de Sistemas</option>
-                   <option>Ingeniería Industrial</option>
-                   <option>Ingeniería Civil</option>
-                   <option>Biología</option>
-                   <option>Enfermería</option>
-                   <option>Zootecnia</option>
-                   <option>Economía</option>
-                   <option>Administración de Empresas</option>
-                   <option>Contaduría Pública</option>
-                   <option>Derecho</option>
-                   <option>Licenciatura en Matemáticas</option>
-                   <option>Licenciatura en Lenguas Extranjeras</option>
-                   <option>Licenciatura en Pedagogía Infantil</option>
-                   <option>Fonoaudiología</option>
+                   {formData.facultad && facultyPrograms[formData.facultad]?.map(p => (
+                     <option key={p} value={p}>{p}</option>
+                   ))}
                 </select>
               </div>
               <div className="form-group mb-0">

@@ -42,7 +42,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[70vh] w-full px-4 animate-fade-in">
+    <div className="flex flex-col items-center justify-center w-full px-4 animate-fade-in pt-32 pb-48 mb-12 mt-10">
       <div className="bg-white p-10 rounded-3xl shadow-2xl border border-slate-100 w-full relative overflow-hidden" style={{ maxWidth: '480px' }}>
         {/* Accent Decor */}
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-primary-600"></div>

@@ -5,6 +5,7 @@ export declare class Group {
     description: string;
     categoria: string;
     leaderName: string;
+    leaderEmail: string;
     grupLAC: string;
     facultad: string;
     areaConocimiento: string;
@@ -56,6 +57,15 @@ export declare const GroupSchema: import("mongoose").Schema<Group, import("mongo
         id: string;
     }> | undefined;
     leaderName?: import("mongoose").SchemaDefinitionProperty<string, Group, Document<unknown, {}, Group, {
+        id: string;
+    }, import("mongoose").DefaultSchemaOptions> & Omit<Group & {
+        _id: Types.ObjectId;
+    } & {
+        __v: number;
+    }, "id"> & {
+        id: string;
+    }> | undefined;
+    leaderEmail?: import("mongoose").SchemaDefinitionProperty<string, Group, Document<unknown, {}, Group, {
         id: string;
     }, import("mongoose").DefaultSchemaOptions> & Omit<Group & {
         _id: Types.ObjectId;
