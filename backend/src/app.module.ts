@@ -17,6 +17,7 @@ import { CiarpModule } from './ciarp/ciarp.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env', '../.env'],
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
